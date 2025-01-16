@@ -27,7 +27,7 @@
           type="button"
           flat
           class="text-sm"
-          size="xs"
+          size="sm"
           color="primary"
         />
       </div>
@@ -50,20 +50,23 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
 
 const router = useRouter()
-
+const $q = useQuasar()
 const Username = ref(null)
 const Password = ref(null)
 
 function onSubmit() {
-  // $q.notify({
-  //   color: 'green-4',
-  //   textColor: 'white',
-  //   icon: 'cloud_done',
-  //   message: 'Submitted',
-  // })
-  router.push('/landing')
+  $q.notify({
+    color: 'green-4',
+    textColor: 'white',
+    icon: 'cloud_done',
+    message: 'Submitted',
+  })
+  setTimeout(() => {
+    router.push('/landing')
+  }, 1500)
 }
 
 function onReset() {

@@ -1,6 +1,7 @@
 <template>
   <q-layout view="hHh lpR lFf">
-    <q-header elevated>
+    <q-img src="/images/alonbg.png" class="fit absolute" />
+    <q-header elevated style="background-color: transparent">
       <q-toolbar>
         <q-btn flat dense round icon="menu" v-show="showMenu">
           <q-menu anchor="bottom left" self="top left" :offset="[0, 10]" no-cap>
@@ -21,7 +22,15 @@
           </q-menu>
         </q-btn>
 
-        <q-toolbar-title @click="home">Mental Tracker</q-toolbar-title>
+        <q-toolbar-title @click="home">
+          <q-img
+            src="/images/alon-logo128x128.png"
+            loading="lazy"
+            spinner-color="white"
+            height="50px"
+            style="max-width: 150px"
+          />
+        </q-toolbar-title>
       </q-toolbar>
     </q-header>
     <q-page-container>
