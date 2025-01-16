@@ -5,6 +5,14 @@
       <q-input
         rounded
         outlined
+        v-model="fullName"
+        label="FullName"
+        lazy-rules
+        :rules="[(val) => (val && val.length > 0) || 'Please Enter FullName']"
+      />
+      <q-input
+        rounded
+        outlined
         v-model="Username"
         label="Username"
         lazy-rules
@@ -21,26 +29,15 @@
         :rules="[(val) => (val !== null && val !== '') || 'Please Enter Password']"
       />
 
-      <div class="flex flex-center">
-        <q-btn
-          label="Forgot Password?"
-          type="button"
-          flat
-          class="text-sm"
-          size="xs"
-          color="primary"
-        />
-      </div>
       <div class="flex flex-center q-pa-md">
-        <q-btn rounded label="Sign-in" type="submit" color="primary" size="lg" />
         <q-btn
+          outline
+          rounded
           label="Sign-up"
-          type="button"
-          flat
+          type="submit"
           class="text-sm"
           size="lg"
           color="primary"
-          to="/registration"
         />
       </div>
     </q-form>
@@ -53,6 +50,7 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
+const fullName = ref(null)
 const Username = ref(null)
 const Password = ref(null)
 
@@ -63,7 +61,7 @@ function onSubmit() {
   //   icon: 'cloud_done',
   //   message: 'Submitted',
   // })
-  router.push('/landing')
+  router.push('/')
 }
 
 function onReset() {

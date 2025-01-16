@@ -1,44 +1,29 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="hHh lpR lFf">
     <q-header elevated>
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
+        <q-btn flat dense round icon="menu" v-show="showMenu">
+          <q-menu anchor="bottom left" self="top left" :offset="[0, 10]" no-cap>
+            <q-list>
+              <q-item
+                clickable
+                v-close-popup
+                v-for="(item, index) in menuList"
+                :key="index"
+                :to="item.navigate"
+              >
+                <q-item-section avatar>
+                  <q-icon :name="item.icon" />
+                </q-item-section>
+                <q-item-section>{{ item.title }}</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
 
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <q-toolbar-title @click="home">Mental Tracker</q-toolbar-title>
       </q-toolbar>
     </q-header>
-
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
-
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
-    </q-drawer>
-
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -46,57 +31,52 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
+import { useRouter, useRoute } from 'vue-router'
+import { ref, watch } from 'vue'
 
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
+const router = useRouter()
+const route = useRoute()
+const showMenu = ref(false)
 
-const leftDrawerOpen = ref(false)
+//check if index or not
+watch(
+  () => route.path,
+  (newPath, oldPath) => {
+    showMenu.value = newPath != '/' && newPath != '/registration' ? true : false
+    console.log(`Navigated from ${oldPath} to ${newPath}`)
+  },
+)
 
-function toggleLeftDrawer () {
-  leftDrawerOpen.value = !leftDrawerOpen.value
+//function to route  home
+const home = () => {
+  router.push('/')
 }
+
+const menuList = [
+  {
+    title: 'Profile',
+    icon: 'person',
+    navigate: 'profile',
+  },
+  {
+    title: 'Health Hotlines',
+    icon: 'connect_without_contact',
+    navigate: 'healthhotlines',
+  },
+  {
+    title: 'Help Center',
+    icon: 'help',
+    navigate: 'helpcenter',
+  },
+  {
+    title: 'Settings',
+    icon: 'settings',
+    navigate: 'settings',
+  },
+  {
+    title: 'About',
+    icon: 'info',
+    navigate: 'about',
+  },
+]
 </script>
