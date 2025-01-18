@@ -35,7 +35,14 @@
         <div class="text-center text-white text-subtitle2">HOW ARE YOU FEELING TODAY?</div>
         <q-card-section>
           <div class="row justify-center">
-            <q-btn v-for="(mood, index) in moods" :key="index" round unelevated class="q-mr-sm">
+            <q-btn
+              v-for="(mood, index) in moods"
+              :key="index"
+              round
+              unelevated
+              class="q-mr-sm"
+              to="/landing"
+            >
               <q-avatar size="30px">
                 <img :src="`/images/${mood.url}`" />
               </q-avatar>

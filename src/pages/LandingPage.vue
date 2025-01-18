@@ -1,34 +1,56 @@
 <template>
-  <q-page class="relative-position" style="height: 100vh">
+  <q-page class="relative-position">
     <!-- Scattered buttons -->
     <div class="full-height full-width">
       <!-- Top section - Inhale, Exhale -->
-      <div class="absolute-position" style="top: 20%; left: 10%">
-        <q-btn color="info" label="Inhale, Exhale!" class="bubble-btn glossy" to="/breathing" />
+      <div v-ripple round class="absolute-position bubble-btn" style="top: 15%; right: 20%">
+        <q-img :src="bubbleUrl" style="cursor: pointer" @click="navigateTo('/breathing')">
+          <div class="fixed-center bg-transparent text-primary text-h6 text-weight-bold">
+            INHALE, EXHALE!
+          </div>
+        </q-img>
       </div>
 
       <!-- Middle section - Mood Check -->
-      <div class="absolute-position" style="top: 30%; right: 10%">
-        <q-btn color="secondary" label="Mood Check!" class="bubble-btn glossy" to="/moodcheck" />
+      <div v-ripple round class="absolute-position bubble-btn" style="top: 25%; left: 20%">
+        <q-img :src="bubbleUrl" style="cursor: pointer" @click="navigateTo('/moodcheck')">
+          <div class="fixed-center bg-transparent text-primary text-h6 text-weight-bold">
+            MOOD CHECK!
+          </div>
+        </q-img>
       </div>
 
       <!-- Bottom section - Spiritual Care -->
-      <div class="absolute-position" style="top: 40%; left: 15%">
-        <q-btn
-          color="primary"
-          label="Spiritual Care"
-          class="bubble-btn glossy"
-          to="/spiritualcare"
-        />
+      <div v-ripple round class="absolute-position bubble-btn" style="top: 40%; right: 20%">
+        <q-img :src="bubbleUrl" style="cursor: pointer" @click="navigateTo('/motivation')">
+          <div class="fixed-center bg-transparent text-primary text-h6 text-weight-bold">
+            MOTIVATION
+          </div>
+        </q-img>
       </div>
 
       <!-- Bottom section - Journal -->
-      <div class="absolute-position" style="top: 50%; right: 15%">
-        <q-btn color="primary" label="Journal" class="bubble-btn glossy" to="/journal" />
+      <div v-ripple round class="absolute-position bubble-btn" style="top: 50%; left: 20%">
+        <q-img :src="bubbleUrl" style="cursor: pointer" @click="navigateTo('/journal')">
+          <div class="fixed-center bg-transparent text-primary text-h6 text-weight-bold">
+            JOURNAL
+          </div>
+        </q-img>
       </div>
     </div>
   </q-page>
 </template>
+
+<script setup>
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const bubbleUrl = '/images/bubble.png'
+const navigateTo = (route = 'breathing') => {
+  router.push(route)
+}
+</script>
 
 <style scoped>
 .bubble-btn {
@@ -45,12 +67,6 @@
 
 .bubble-btn:hover {
   transform: scale(1.05);
-}
-
-/* Ensure the page takes full height */
-.q-page {
-  min-height: 100vh;
-  background: transparent;
 }
 
 /* Use absolute positioning for precise control */

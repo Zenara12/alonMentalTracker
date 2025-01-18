@@ -13,19 +13,28 @@
           />
         </q-toolbar-title>
         <q-btn flat dense round icon="menu" v-show="showMenu">
-          <q-menu anchor="bottom left" self="top left" :offset="[0, 10]" no-cap>
-            <q-list>
+          <q-menu
+            flat
+            anchor="bottom left"
+            self="top left"
+            :offset="[0, 10]"
+            transition-show="slide-down"
+            transition-duration="600"
+            auto-close
+          >
+            <q-list color="primary">
               <q-item
                 clickable
                 v-close-popup
+                color="primary"
                 v-for="(item, index) in menuList"
                 :key="index"
                 :to="item.navigate"
               >
                 <q-item-section avatar>
-                  <q-icon :name="item.icon" />
+                  <q-icon color="primary" :name="item.icon" />
                 </q-item-section>
-                <q-item-section>{{ item.title }}</q-item-section>
+                <q-item-section class="text-primary">{{ item.title }}</q-item-section>
               </q-item>
             </q-list>
           </q-menu>
