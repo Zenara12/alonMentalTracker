@@ -57,7 +57,7 @@
         :rules="[(val) => (val !== null && val !== '') || 'Please fill your name']"
       >
         <template v-slot:after>
-          <q-btn round dense flat color="primary" icon="send" />
+          <q-btn round dense flat color="primary" icon="send" @click="registerUser" />
         </template>
       </q-input>
 
@@ -71,9 +71,9 @@
 
 <script setup>
 // import { ref } from 'vue'
-// import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 
-// const router = useRouter()
+const router = useRouter()
 
 // const fullName = ref(null)
 // const Username = ref(null)
@@ -88,6 +88,10 @@
 //   // })
 //   router.push('/')
 // }
+
+const registerUser = () => {
+  router.push('/feeling')
+}
 </script>
 
 <style scoped>

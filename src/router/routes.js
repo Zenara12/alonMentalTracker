@@ -15,6 +15,7 @@ const routes = [
       { path: 'helpcenter', component: () => import('pages/HelpCenterPage.vue') },
       { path: 'about', component: () => import('pages/AboutPage.vue') },
       { path: 'profile', component: () => import('pages/ProfilePage.vue') },
+      { path: 'feeling', component: () => import('pages/FeelingPage.vue') },
     ],
   },
 
