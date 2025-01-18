@@ -1,23 +1,31 @@
 <template>
   <q-page class="q-pa-md">
-    <div class="text-h4 q-mb-lg">INHALE, EXHALE!</div>
-    <div class="text-subtitle1 q-mb-md">BREATHING EXERCISES</div>
-
+    <!--Breathing Main Display-->
+    <div class="text-h4 q-mt-lg text-weight-bolder text-white">INHALE, EXHALE!</div>
+    <div class="text-subtitle1 text-weight-bold text-white q-mb-md">BREATHING EXERCISES</div>
     <div class="row q-col-gutter-md">
       <div v-for="exercise in exercises" :key="exercise.name" class="col-6">
-        <q-card class="text-center q-pa-md bg-light-blue-2">
-          <div class="text-subtitle1">{{ exercise.name }}</div>
-          <q-btn
-            round
-            color="primary"
-            icon="play_arrow"
-            class="q-mt-sm"
-            size="lg"
-            @click="startExercise(exercise)"
-          />
+        <q-card
+          class="text-center q-pa-xs bg-wh transparent-card"
+          style="border-radius: 2rem"
+          bordered
+        >
+          <div class="text-h6 text-primary q-mt-lg">{{ exercise.name }}</div>
+          <q-card-actions align="right">
+            <q-btn
+              round
+              color="primary"
+              icon="play_arrow"
+              class=""
+              size="md"
+              @click="startExercise(exercise)"
+            />
+          </q-card-actions>
         </q-card>
       </div>
     </div>
+
+    <!--Excerise Display-->
   </q-page>
 </template>
 
@@ -38,3 +46,9 @@ const startExercise = (exercise) => {
   console.log(`Starting ${exercise.name} exercise`)
 }
 </script>
+
+<style scoped>
+.transparent-card {
+  background: rgba(255, 255, 255, 0.377);
+}
+</style>
