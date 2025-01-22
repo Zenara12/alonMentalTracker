@@ -71,7 +71,7 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 
@@ -105,6 +105,11 @@ const registerUser = () => {
     router.push('/landing')
   }, 1500)
 }
+
+onMounted(() => {
+  const profile = $q.localStorage.getItem('profile')
+  if (profile) router.push('/landing')
+})
 </script>
 
 <style scoped>

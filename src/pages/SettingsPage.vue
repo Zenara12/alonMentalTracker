@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-md text-cyan">
-    <div class="text-h4 text-white q-mb-lg">SETTINGS</div>
+    <div class="text-h4 text-white q-mb-lg q-mt-xl">SETTINGS</div>
 
     <q-card>
       <q-list>
@@ -24,7 +24,7 @@
             <q-item-label>Dark Mode</q-item-label>
           </q-item-section>
           <q-item-section side>
-            <q-toggle v-model="darkMode" />
+            <q-toggle v-model="darkMode" @update:model-value="toggleDarkMode" />
           </q-item-section>
         </q-item>
 
@@ -52,11 +52,19 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useQuasar } from 'quasar'
+
+const $q = useQuasar()
 
 const notifications = ref(false)
-const darkMode = ref(false)
+const darkMode = ref($q.dark.isActive)
 const font = ref('Default')
 const fontSize = ref('Medium')
 const fontOptions = ref(['Default', 'Sans-serif', 'Serif', 'Monospace'])
 const fontSizeOptions = ref(['Small', 'Medium', 'Large'])
+
+const toggleDarkMode = () => {
+  $q.dark.set(darkMode.value) // Enable/disable dark mode
+  localStorage.setItem('darkMode', darkMode.value.toString()) // Save preference
+}
 </script>

@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-md">
     <!--Breathing Main Display-->
-    <div class="text-h4 text-weight-bolder text-white q-mt-lg">INHALE, EXHALE!</div>
+    <div class="text-h4 text-weight-bolder text-white q-mt-xl">INHALE, EXHALE!</div>
     <div class="text-subtitle1 text-weight-bold text-white q-mb-md">BREATHING EXERCISES</div>
     <div class="row q-col-gutter-md">
       <div v-for="exercise in exercises" :key="exercise.name" class="col-6">

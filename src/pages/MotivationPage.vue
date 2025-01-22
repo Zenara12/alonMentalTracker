@@ -1,5 +1,5 @@
 <template>
-  <q-page class="text-cyan">
+  <q-page class="text-cyan q-pt-lg">
     <section class="q-pa-md">
       <div class="text-h4 text-weight-bolder text-white q-mb-lg">MOTIVATION</div>
 

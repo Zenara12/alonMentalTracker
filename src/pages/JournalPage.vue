@@ -1,6 +1,6 @@
 <template>
   <q-page class="text-white q-pa-md">
-    <div class="text-h4 q-mb-lg">JOURNAL</div>
+    <div class="text-h4 text-weight-bolder q-my-lg">JOURNAL</div>
 
     <!-- Journal Cards Grid -->
     <div class="row q-col-gutter-md q-mt-md" v-if="showJournals">
@@ -162,7 +162,6 @@ const saveJournal = () => {
   } else {
     updateJournal(crudData.value, journalEntry)
   }
-
   clearForm()
 }
 
