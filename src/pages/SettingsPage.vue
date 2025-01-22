@@ -1,6 +1,6 @@
 <template>
-  <q-page class="q-pa-md">
-    <div class="text-h4 q-mb-lg">SETTINGS</div>
+  <q-page class="q-pa-md text-cyan">
+    <div class="text-h4 text-white q-mb-lg">SETTINGS</div>
 
     <q-card>
       <q-list>

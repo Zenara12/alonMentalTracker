@@ -58,15 +58,15 @@ const showMenu = ref(false)
 //check if index or not
 watch(
   () => route.path,
-  (newPath, oldPath) => {
+  (newPath) => {
     showMenu.value = newPath != '/' && newPath != '/registration' ? true : false
-    console.log(`Navigated from ${oldPath} to ${newPath}`)
+    //console.log(`Navigated from ${oldPath} to ${newPath}`)
   },
 )
 
 //function to route  home
 const home = () => {
-  router.push('/')
+  router.push('/landing')
 }
 
 const menuList = [

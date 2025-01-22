@@ -1,14 +1,14 @@
 <template>
-  <q-page class="q-pa-md">
+  <q-page class="q-pa-md text-cyan">
     <!-- Header -->
     <div>
-      <div class="text-h5 q-mt-sm">PROFILE</div>
+      <div class="text-h5 text-white q-mt-sm">PROFILE</div>
     </div>
 
     <!-- Profile Card -->
     <div class="row justify-center q-mt-md">
       <div class="col-12 col-sm-8 col-md-6">
-        <q-card class="bg-cyan-2" rounded bordered>
+        <q-card class="transparent-card-40" rounded bordered>
           <!-- Profile Image -->
           <q-card-section class="text-center q-pt-xl">
             <q-avatar size="120px">

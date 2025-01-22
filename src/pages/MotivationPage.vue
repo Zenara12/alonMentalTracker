@@ -1,31 +1,29 @@
 <template>
-  <q-page class="">
+  <q-page class="text-cyan">
     <section class="q-pa-md">
-      <div class="text-h4 q-mb-lg">MOTIVATION</div>
+      <div class="text-h4 text-weight-bolder text-white q-mb-lg">MOTIVATION</div>
 
-      <div class="text-h6 q-mb-md">BIBLE VERSES</div>
+      <div class="text-h6 text-weight-bolder text-white q-mb-md">BIBLE VERSES</div>
 
       <q-card
         v-for="(verse, index) in bibleVerses"
         :key="index"
-        flat
-        class="bg-cyan-2 q-pa-md q-mb-md"
+        class="q-pa-md q-mb-md transparent-card-40"
       >
         <q-card-section>
-          <div class="text-center text-cyan-9">{{ verse.text }}</div>
-          <div class="text-right text-cyan-7">{{ verse.reference }}</div>
+          <div class="text-center text-weight-bold">{{ verse.text }}</div>
+          <div class="text-right">{{ verse.reference }}</div>
         </q-card-section>
       </q-card>
 
-      <div class="text-h6 q-mb-md q-mt-lg">AFFIRMATIONS</div>
+      <div class="text-h6 text-weight-bolder q-mb-md q-mt-lg">AFFIRMATIONS</div>
 
       <q-card
         v-for="(affirmation, index) in affirmations"
         :key="index"
-        flat
-        class="bg-cyan-2 q-pa-md q-mb-md"
+        class="transparent-card-40 q-pa-md q-mb-md"
       >
-        <q-card-section class="text-center text-cyan-9">
+        <q-card-section class="text-center text-weight-bold">
           {{ affirmation }}
         </q-card-section>
       </q-card>

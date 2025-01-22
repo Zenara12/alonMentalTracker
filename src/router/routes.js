@@ -16,6 +16,12 @@ const routes = [
       { path: 'about', component: () => import('pages/AboutPage.vue') },
       { path: 'profile', component: () => import('pages/ProfilePage.vue') },
       { path: 'feeling', component: () => import('pages/FeelingPage.vue') },
+      {
+        path: 'exercise/:title/:duration',
+        name: 'exercise',
+        component: () => import('pages/ExercisePage.vue'),
+        props: true,
+      },
     ],
   },
 
