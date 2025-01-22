@@ -71,11 +71,6 @@ const home = () => {
 
 const menuList = [
   {
-    title: 'Profile',
-    icon: 'person',
-    navigate: 'profile',
-  },
-  {
     title: 'Health Hotlines',
     icon: 'connect_without_contact',
     navigate: 'healthhotlines',

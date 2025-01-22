@@ -47,6 +47,7 @@
         <p>Hi I'm Alon, and you are?</p>
       </div>
       <q-input
+        v-model="profile.name"
         rounded
         standout
         type="text"
@@ -70,12 +71,14 @@
 </template>
 
 <script setup>
-// import { ref } from 'vue'
+import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
 
+const $q = useQuasar()
 const router = useRouter()
 
-// const fullName = ref(null)
+//const fullName = ref('')
 // const Username = ref(null)
 // const Password = ref(null)
 
@@ -89,8 +92,18 @@ const router = useRouter()
 //   router.push('/')
 // }
 
+const profile = reactive({
+  name: '',
+  age: '0',
+  birthday: new Date(),
+  email: '',
+})
+
 const registerUser = () => {
-  router.push('/feeling')
+  $q.localStorage.set('profile', profile)
+  setTimeout(() => {
+    router.push('/landing')
+  }, 1500)
 }
 </script>
 
