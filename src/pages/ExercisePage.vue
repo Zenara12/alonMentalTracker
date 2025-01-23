@@ -20,11 +20,17 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, onBeforeUnmount } from 'vue'
+import { useRoute, onBeforeRouteLeave } from 'vue-router'
 
 const route = useRoute()
 
+const audioSrc = new Audio('/audios/exerciseSound.mp3')
+
+const playAudio = () => {
+  audioSrc.play()
+}
+playAudio()
 //console.log(route.params)
 const timeLeft = ref(route.params.duration)
 const minutes = (timeLeft) => Math.floor(timeLeft / 60)
@@ -40,4 +46,14 @@ const startTimer = () => {
 }
 
 startTimer()
+
+onBeforeUnmount(() => {
+  audioSrc.pause()
+  audioSrc.currentTime = 0
+})
+
+onBeforeRouteLeave(() => {
+  audioSrc.pause()
+  audioSrc.currentTime = 0
+})
 </script>
