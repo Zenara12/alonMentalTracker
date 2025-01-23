@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Alon</string>
+    <string name="title_activity_main">Alon</string>
+    <string name="package_name">com.alon.app</string>
+    <string name="custom_url_scheme">com.alon.app</string>
+</resources>

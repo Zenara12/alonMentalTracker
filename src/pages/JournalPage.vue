@@ -10,10 +10,9 @@
         :key="index"
         class="col-12 col-sm-6"
         style="width: 50%"
-        @click="showForm(index)"
       >
         <q-card class="transparent-card-60" rounded bordered>
-          <q-item>
+          <q-item @click="showForm(index)">
             <q-item-section>
               <q-item-label class="text-h6 text-weight-bolder">{{ journal.title }}</q-item-label>
               <q-item-label caption
@@ -22,7 +21,7 @@
               </q-item-label>
             </q-item-section>
           </q-item>
-          <q-card-section>
+          <q-card-section @click="showForm(index)">
             <div class="text-h6 text-weight-bolder"></div>
             <div class="text-subtitle1">{{ journal.note }}</div>
             <div class="text-subtitle2" v-for="(item, index) in journal.gratefulItems" :key="index">
@@ -152,7 +151,7 @@ const editJournal = (index) => {
 const saveJournal = () => {
   const journalEntry = {
     title: journalForm.value.title,
-    note: journalForm.value.title,
+    note: journalForm.value.note,
     gratefulItems: journalForm.value.gratefulItems,
     dayRating: journalForm.value.dayRating,
     dateCreated: new Date(),

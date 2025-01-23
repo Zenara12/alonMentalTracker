@@ -102,7 +102,7 @@ const profile = reactive({
 const registerUser = () => {
   $q.localStorage.set('profile', profile)
   setTimeout(() => {
-    router.push('/landing')
+    router.push('/feeling')
   }, 1500)
 }
 

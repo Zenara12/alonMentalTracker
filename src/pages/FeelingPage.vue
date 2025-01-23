@@ -7,7 +7,7 @@
       <q-img src="/images/bubble.png" spinner-color="primary" width="300px" height="auto">
         <div class="fixed-center text-h3 text-center bg-transparent text-primary">
           <div class="text-h3 text-cyan-7">Hello,</div>
-          <div class="text-h4 text-cyan-7">Maya!</div>
+          <div class="text-h4 text-cyan-7">{{ profile.name }}</div>
         </div>
       </q-img>
 
@@ -55,7 +55,12 @@
 </template>
 
 <script setup>
-//import { ref } from 'vue'
+import { ref } from 'vue'
+import { useQuasar } from 'quasar'
+
+const $q = useQuasar()
+
+const profile = ref($q.localStorage.getItem('profile'))
 
 const moods = [
   { url: 'happy-colored.png' },
