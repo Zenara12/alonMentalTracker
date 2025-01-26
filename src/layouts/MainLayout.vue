@@ -49,11 +49,18 @@
 
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
+import { useBackButton } from 'src/backButtonHandler'
 
 const router = useRouter()
 const route = useRoute()
-const showMenu = ref(false)
+const showMenu = ref(true)
+
+useBackButton()
+
+onMounted(() => {
+  showMenu.value = route.path != '/' && route.path != '/registration' ? true : false
+})
 
 //check if index or not
 watch(
