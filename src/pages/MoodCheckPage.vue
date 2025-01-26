@@ -1,79 +1,131 @@
 <template>
   <q-page class="text-primary q-pa-md">
-    <div class="text-h4 text-white text-weight-bolder q-mb-lg q-mt-lg">MOOD CHECK</div>
+    <div class="text-h4 text-white text-weight-bolder q-mt-lg">MOOD CHECK</div>
     <!---Emotions sections-->
-    <q-card class="q-pa-md">
-      <div class="transparent-card-40 text-subtitle1 text-weight-bolder q-py-sm q-px-sm">
+    <q-card class="q-pa-md bg-transparent" flat>
+      <div class="text-subtitle1 text-weight-bolder q-py-sm q-px-sm bg-info text-white">
         Emotions
       </div>
-      <div class="row q-col-gutter-md">
+      <div class="row q-col-gutter-md q-mt-xs">
         <div v-for="(emotion, index) in emotions" :key="index" class="col-3 text-center">
-          <q-btn @click="changeEmotion(index)" round flat size="lg" :color="emotion.color">
-            <q-avatar size="30px">
+          <q-btn @click="changeEmotion(index)" round size="md">
+            <q-avatar :size="buttonAvatarSize">
               <img :src="`/images/${emotion.icon}`" />
             </q-avatar>
           </q-btn>
-          <div class="q-mt-sm">{{ emotion.name }}</div>
+          <div class="q-mt-sm text-weight-bolder">{{ emotion.name }}</div>
         </div>
-        <div class="q-mt-sm">
-          <q-btn round flat size="lg" color="primary">
-            <q-avatar size="30px">
-              <img :src="`/images/cross.png`" />
+        <div class="col-3 q-mb-sm">
+          <q-btn round size="md">
+            <q-avatar :size="buttonAvatarSize">
+              <img :src="`/images/add.png`" />
             </q-avatar>
           </q-btn>
         </div>
       </div>
     </q-card>
 
-    <q-card v-if="currentEmotion !== null" class="q-mt-md">
-      <q-card-section :class="`text-${emotions[currentEmotion].color}`">
-        <div class="row items-center justify-between">
-          <div class="text-weight-bolder">{{ emotions[currentEmotion].name }}</div>
-          <div class="text-h6">{{ emotions[currentEmotion].range }}/100</div>
-        </div>
-        <q-slider
-          v-model="emotions[currentEmotion].range"
-          :min="0"
-          :max="100"
+    <q-card flat outlined v-show="showEmotion" class="q-mt-md bg-transparent">
+      <q-card-actions
+        :class="`text-${emotions[currentEmotion].color} ${emotions[currentEmotion].color}-transparent`"
+        align="center"
+      >
+        <q-btn
+          class=""
+          @click="emotionReset"
+          icon="sync"
+          push
           :color="emotions[currentEmotion].color"
-        />
-      </q-card-section>
+        ></q-btn>
+        <q-space />
+        <div class="column items-center justify-center content-center">
+          <div class="text-h6">{{ emotions[currentEmotion].range }}/100</div>
+          <div class="text-weight-bolder text-h6">{{ emotions[currentEmotion].name }} Button</div>
+        </div>
+        <q-space />
+        <q-btn
+          class="q-mr-sm"
+          @click="emotionsMinusRange"
+          icon="remove"
+          v-touch-repeat:600:300:50.mouse="emotionsMinusRange"
+          push
+          :color="emotions[currentEmotion].color"
+        >
+        </q-btn>
+        <q-btn
+          class=""
+          @click="emotionsAddRange"
+          v-touch-repeat:600:300:50.mouse="emotionsAddRange"
+          icon="add"
+          push
+          :color="emotions[currentEmotion].color"
+        >
+        </q-btn>
+      </q-card-actions>
     </q-card>
-
-    <q-card class="q-pa-md q-mt-md">
-      <div class="transparent-card-40 text-subtitle1 text-weight-bolder q-py-sm q-px-sm">
+    <!---Activities sections-->
+    <q-card class="q-pa-md q-mt-md bg-transparent" flat>
+      <div
+        class="bg-info text-white text-subtitle1 text-weight-bolder q-py-sm q-px-sm rounded-borders"
+      >
         Activities
       </div>
-      <div class="row q-col-gutter-md">
+      <div class="row q-col-gutter-md q-mt-xs">
         <div v-for="(activity, index) in activities" :key="index" class="col-3 text-center">
           <q-btn @click="changeActivity(index)" round flat size="lg" :color="activity.color">
-            <q-avatar size="30px">
+            <q-avatar :size="buttonAvatarSize">
               <img :src="`/images/${activity.icon}`" />
             </q-avatar>
           </q-btn>
         </div>
-        <div class="q-mt-sm">
+        <div class="q-mb-sm">
           <q-btn round flat size="lg" color="primary">
-            <q-avatar size="30px">
-              <img :src="`/images/cross.png`" />
+            <q-avatar :size="buttonAvatarSize">
+              <img :src="`/images/add.png`" />
             </q-avatar>
           </q-btn>
         </div>
       </div>
     </q-card>
-    <q-card v-if="currentActivity !== null" class="q-mt-md">
-      <q-card-section :class="`text-${activities[currentActivity].color}`">
-        <div class="row items-center justify-between">
-          <div class="text-weight-bolder">{{ activities[currentActivity].name }}</div>
-          <div class="text-h6">{{ activities[currentActivity].range }}/100</div>
-        </div>
-        <q-slider
-          v-model="activities[currentActivity].range"
-          :min="0"
-          :max="100"
+    <q-card flat outlined v-show="showActivity" class="q-mt-md bg-transparent">
+      <q-card-actions
+        :class="`text-${activities[currentActivity].color} ${activities[currentActivity].color}-transparent`"
+        align="center"
+      >
+        <q-btn
+          class=""
+          @click="activityReset"
+          icon="sync"
+          push
           :color="activities[currentActivity].color"
-        />
-      </q-card-section>
+        ></q-btn>
+        <q-space />
+        <div class="column items-center justify-center content-center">
+          <div class="text-h6">{{ activities[currentActivity].range }}/100</div>
+          <div class="text-weight-bolder text-h6">
+            {{ activities[currentActivity].name }} Button
+          </div>
+        </div>
+        <q-space />
+        <q-btn
+          class="q-mr-sm"
+          @click="activityMinusRange"
+          icon="remove"
+          v-touch-repeat:600:300:50.mouse="activityMinusRange"
+          push
+          :color="activities[currentActivity].color"
+        >
+        </q-btn>
+        <q-btn
+          class=""
+          @click="activityAddRange"
+          v-touch-repeat:600:300:50.mouse="activityAddRange"
+          icon="add"
+          push
+          :color="activities[currentActivity].color"
+        >
+        </q-btn>
+      </q-card-actions>
     </q-card>
   </q-page>
 </template>
@@ -81,19 +133,53 @@
 <script setup>
 import { ref, reactive } from 'vue'
 
-const currentEmotion = ref(null)
+const buttonAvatarSize = '50px'
+
+//Emotion scripts
+const showEmotion = ref(false)
+const currentEmotion = ref(0)
 const changeEmotion = (value) => {
   currentEmotion.value = value
-  console.log(currentEmotion.value)
+  showEmotion.value = true
 }
-const currentActivity = ref(null)
+const emotionsAddRange = () => {
+  if (emotions[currentEmotion.value].range !== 100) {
+    emotions[currentEmotion.value].range++
+  }
+}
+const emotionsMinusRange = () => {
+  if (emotions[currentEmotion.value].range !== 0) {
+    emotions[currentEmotion.value].range--
+  }
+}
+const emotionReset = () => {
+  emotions[currentEmotion.value].range = 0
+}
+
+//Activities scripts
+const showActivity = ref(false)
+const currentActivity = ref(0)
 const changeActivity = (value) => {
   currentActivity.value = value
-  console.log(currentActivity.value)
+  showActivity.value = true
+}
+
+const activityAddRange = () => {
+  if (activities[currentActivity.value].range !== 100) {
+    activities[currentActivity.value].range++
+  }
+}
+const activityMinusRange = () => {
+  if (activities[currentActivity.value].range !== 0) {
+    activities[currentActivity.value].range--
+  }
+}
+const activityReset = () => {
+  activities[currentActivity.value].range = 0
 }
 
 const emotions = reactive([
-  { name: 'Cheerful', icon: 'cheerful.png', color: 'blue', range: 0 },
+  { name: 'Cheerful', icon: 'cheerful.png', color: 'warning', range: 0 },
   { name: 'Neutral', icon: 'nuetral.png', color: 'grey', range: 0 },
   { name: 'Sad', icon: 'sad.png', color: 'blue-grey', range: 0 },
   { name: 'Angry', icon: 'angry.png', color: 'red', range: 0 },
@@ -102,7 +188,7 @@ const emotions = reactive([
   { name: 'Jealous', icon: 'jealous.png', color: 'green', range: 0 },
 ])
 const activities = reactive([
-  { name: 'Run', icon: 'running.png', color: 'blue', range: 0 },
+  { name: 'Run', icon: 'running.png', color: 'warning', range: 0 },
   { name: 'Read', icon: 'book.png', color: 'grey', range: 0 },
   { name: 'Art', icon: 'art.png', color: 'blue-grey', range: 0 },
   { name: 'Excercise', icon: 'fitness.png', color: 'red', range: 0 },
@@ -111,3 +197,27 @@ const activities = reactive([
   { name: 'Sleep', icon: 'sleep.png', color: 'green', range: 0 },
 ])
 </script>
+
+<style scoped>
+.warning-transparent {
+  background: rgba(255, 251, 0, 0.301);
+}
+.grey-transparent {
+  background-color: rgba(71, 71, 71, 0.3);
+}
+.blue-grey-transparent {
+  background-color: rgba(38, 33, 100, 0.3);
+}
+.red-transparent {
+  background-color: rgba(255, 0, 0, 0.3);
+}
+.purple-transparent {
+  background-color: rgba(204, 0, 255, 0.3);
+}
+.orange-transparent {
+  background-color: rgba(255, 174, 0, 0.3);
+}
+.green-transparent {
+  background-color: rgba(0, 255, 0, 0.3);
+}
+</style>
