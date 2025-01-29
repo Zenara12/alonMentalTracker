@@ -51,15 +51,55 @@
 import { useRouter, useRoute } from 'vue-router'
 import { ref, watch, onMounted } from 'vue'
 import { useBackButton } from 'src/backButtonHandler'
+import { useQuasar } from 'quasar'
+
+const $q = useQuasar()
 
 const router = useRouter()
 const route = useRoute()
 const showMenu = ref(true)
 
-useBackButton()
+const selectedFont = ref('Roboto')
+const selectedSize = ref({
+  label: 'Small',
+  value: '1rem',
+})
+
+const savedFont = ref($q.localStorage.getItem('selectedFont'))
+const savedSize = ref($q.localStorage.getItem('selectedSize'))
+const darkMode = ref($q.localStorage.getItem('darkMode'))
+
+const updateFontFamily = (font) => {
+  document.body.style.fontFamily = font
+  $q.localStorage.setItem('selectedFont', font)
+}
+
+const updateFontSize = (size) => {
+  document.body.style.fontSize = size.value
+  $q.localStorage.setItem('selectedSize', size)
+}
+
+const initFontPreferences = () => {
+  if (!savedFont.value) {
+    updateFontFamily(selectedFont.value)
+  }
+
+  if (!savedSize.value) {
+    updateFontSize(selectedSize.value)
+  }
+}
+const toggleDarkMode = () => {
+  $q.dark.set(darkMode.value) // Enable/disable dark mode
+  localStorage.setItem('darkMode', darkMode.value.toString()) // Save preference
+}
 
 onMounted(() => {
+  useBackButton()
   showMenu.value = route.path != '/' && route.path != '/registration' ? true : false
+  initFontPreferences()
+  if (darkMode.value) {
+    toggleDarkMode()
+  }
 })
 
 //check if index or not

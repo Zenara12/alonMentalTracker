@@ -1,7 +1,7 @@
 <template>
   <q-page class="bg-amber-50">
     <div class="row q-my-md">
-      <q-btn flat icon="arrow_back" to="/about" />
+      <BackButton />
       <div class="text-white text-h5">About ALON</div>
     </div>
 
@@ -24,74 +24,17 @@
           </p>
 
           <div class="text-h6 q-mb-md">Key Features</div>
-          <q-list bordered separator>
-            <q-item>
+          <q-list>
+            <q-item v-for="(item, index) in keyFeatures" :key="index">
               <q-item-section>
-                <q-item-label class="text-weight-medium text-cyan">Mood Tracker</q-item-label>
-                <q-item-label caption class="text-cyan"
-                  >Monitor and track emotional state, helping better understand mood patterns and
-                  manage stress or anxiety effectively.</q-item-label
-                >
-              </q-item-section>
-            </q-item>
-
-            <q-item>
-              <q-item-section>
-                <q-item-label class="text-weight-medium text-cyan">Journaling</q-item-label>
-                <q-item-label caption class="text-cyan"
-                  >A safe space for reflection on daily experiences and emotions through text,
-                  images, videos, or voice recordings.</q-item-label
-                >
-              </q-item-section>
-            </q-item>
-
-            <q-item>
-              <q-item-section>
-                <q-item-label class="text-weight-medium text-cyan"
-                  >Breathing Exercises</q-item-label
-                >
-                <q-item-label caption class="text-cyan"
-                  >Guided techniques to help alleviate stress, calm minds, and improve
-                  focus.</q-item-label
-                >
-              </q-item-section>
-            </q-item>
-
-            <q-item>
-              <q-item-section>
-                <q-item-label class="text-weight-medium text-cyan"
-                  >Motivational Affirmations</q-item-label
-                >
-                <q-item-label caption class="text-cyan"
-                  >Personalized, positive affirmations to boost self-esteem and build a positive
-                  mindset.</q-item-label
-                >
-              </q-item-section>
-            </q-item>
-
-            <q-item>
-              <q-item-section>
-                <q-item-label class="text-weight-medium text-cyan">Health Hotlines</q-item-label>
-                <q-item-label caption class="text-cyan"
-                  >Direct access to immediate, confidential support from trained
-                  professionals.</q-item-label
-                >
-              </q-item-section>
-            </q-item>
-
-            <q-item>
-              <q-item-section>
-                <q-item-label class="text-weight-medium text-cyan"
-                  >Reminders for Self-Care</q-item-label
-                >
-                <q-item-label caption class="text-cyan"
-                  >Medication, water intake, and activity reminders to maintain a balanced
-                  lifestyle.</q-item-label
-                >
+                <q-item-label class="text-weight-bold text-cyan text-subtitle1">{{
+                  item.title
+                }}</q-item-label>
+                <q-item-label caption class="text-cyan">{{ item.description }}</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
-          <div>
+          <div class="text-weight-bold text-subtitle2 q-mt-md">
             This app is built with the needs of senior high school students in mind, offering an
             easy-to-use interface, accessible features, and customized support. ALON not only aims
             to improve students' emotional well-being but also strives to raise awareness about the
@@ -102,3 +45,36 @@
     </div>
   </q-page>
 </template>
+
+<script setup>
+import BackButton from 'src/components/BackButton.vue'
+
+const keyFeatures = [
+  {
+    title: `Mood Tracker`,
+    description: `Monitor and track emotional state, helping better understand mood patterns and
+                  manage stress or anxiety effectively.`,
+  },
+  {
+    title: `Journaling`,
+    description: `A safe space for reflection on daily experiences and emotions through text,
+                  images, videos, or voice recordings.`,
+  },
+  {
+    title: `Breathing Exercises`,
+    description: `Guided techniques to help alleviate stress, calm minds, and improve focus.`,
+  },
+  {
+    title: `Motivational Affirmations`,
+    description: `Personalized, positive affirmations to boost self-esteem and build a positive mindset.`,
+  },
+  {
+    title: `Health Hotlines`,
+    description: `Direct access to immediate, confidential support from trained professionals.`,
+  },
+  {
+    title: `Reminders for Self-Care`,
+    description: `Medication, water intake, and activity reminders to maintain a balanced lifestyle.`,
+  },
+]
+</script>

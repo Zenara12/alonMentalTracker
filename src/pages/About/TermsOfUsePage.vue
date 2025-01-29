@@ -1,7 +1,11 @@
+<script setup>
+import BackButton from 'src/components/BackButton.vue'
+</script>
+
 <template>
   <q-page class="bg-amber-50">
     <div class="row q-my-md">
-      <q-btn flat icon="arrow_back" to="/about" />
+      <BackButton />
       <div class="text-white text-h5">Terms of Use</div>
     </div>
 
@@ -46,13 +50,13 @@
             Application are solely for RESEARCH PURPOSES ONLY conducted by the researchers/owners of
             the Application.
           </p>
-          <span>
+          <div class="text-bold text-subtitle2">
             The Agreement constitutes the entire agreement between you and the creators regarding
             your use of the Application and supersedes all prior and contemporaneous written or oral
             agreements between you and the creators. You may be subject to additional or modified
             terms and conditions that apply when you use the Application, which the creators will
             provide to you at the time of such use or purchase.
-          </span>
+          </div>
         </q-card-section>
       </q-card>
     </div>

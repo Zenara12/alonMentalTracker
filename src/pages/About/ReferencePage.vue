@@ -1,14 +1,14 @@
 <template>
   <q-page class="bg-amber-50">
     <div class="row q-my-md">
-      <q-btn flat icon="arrow_back" to="/about" />
+      <BackButton />
       <div class="text-white text-h5">References</div>
     </div>
 
     <div class="q-pa-md">
       <q-card flat bordered class="bg-white">
         <q-card-section>
-          <q-list bordered separator>
+          <q-list>
             <q-item v-for="(ref, index) in references" :key="index">
               <q-item-section>
                 <q-item-label class="text-body1 text-primary">{{ ref.citation }}</q-item-label>
@@ -25,6 +25,8 @@
 </template>
 
 <script setup>
+import BackButton from 'src/components/BackButton.vue'
+
 const references = [
   {
     citation: 'Anonymous. (n.d.). A quote from Secrets of Divine Love.',

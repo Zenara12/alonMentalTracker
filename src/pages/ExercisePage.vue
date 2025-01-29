@@ -1,10 +1,11 @@
 <template>
   <q-page class="relative-position">
+    <q-img src="/videos/breathing-exercises-bg.gif" class="fit absolute"></q-img>
     <div class="absolute-full column items-center justify-center q-pa-md">
       <q-img src="/images/bubble.png" spinner-color="primary" width="300px" height="auto">
-        <div class="fixed-center text-h3 text-center bg-transparent text-primary">
-          <div class="text-h3 text-cyan-7">{{ route.params.title }}</div>
-          <div class="text-h4 text-cyan-7">{{ minutes(timeLeft) }}:{{ seconds(timeLeft) }}</div>
+        <div class="fixed-center text-h3 text-center bg-transparent text-white">
+          <div class="text-h3 text-shadow">{{ route.params.title }}</div>
+          <div class="text-h4">{{ minutes(timeLeft) }}:{{ seconds(timeLeft) }}</div>
         </div>
       </q-img>
       <q-btn

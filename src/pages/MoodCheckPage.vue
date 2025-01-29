@@ -13,7 +13,7 @@
               <img :src="`/images/${emotion.icon}`" />
             </q-avatar>
           </q-btn>
-          <div class="q-mt-sm text-weight-bolder">{{ emotion.name }}</div>
+          <div class="q-mt-sm text-weight-bolder text-subtitle1">{{ emotion.name }}</div>
         </div>
         <div class="col-3 q-mb-sm">
           <q-btn round size="md">

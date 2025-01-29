@@ -24,7 +24,7 @@
       <!-- Bottom section - Spiritual Care -->
       <div v-ripple round class="absolute-position bubble-btn" style="top: 40%; right: 20%">
         <q-img :src="bubbleUrl" style="cursor: pointer" @click="navigateTo('/motivation')">
-          <div class="fixed-center bg-transparent text-primary text-h6 text-weight-bold">
+          <div class="fixed-center bg-transparent text-primary text-h6 text-weight-bold text-wrap">
             MOTIVATION
           </div>
         </q-img>
@@ -75,6 +75,9 @@ const navigateTo = (route = 'breathing') => {
 
 .bubble-btn:hover {
   transform: scale(1.05);
+}
+.text-wrap {
+  word-wrap: break-word;
 }
 
 /* Use absolute positioning for precise control */

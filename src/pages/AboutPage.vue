@@ -1,7 +1,7 @@
 <template>
   <q-page class="bg-amber-50">
     <div class="row items-center q-my-md">
-      <q-btn icon="arrow_back" flat to="/landing" />
+      <back-button />
       <div class="text-h4 text-white">ABOUT</div>
     </div>
 
@@ -44,3 +44,7 @@
     </q-list>
   </q-page>
 </template>
+
+<script setup>
+import BackButton from '../components/BackButton.vue'
+</script>

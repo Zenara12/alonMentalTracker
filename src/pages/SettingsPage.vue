@@ -33,7 +33,12 @@
             <q-item-label>Font</q-item-label>
           </q-item-section>
           <q-item-section side>
-            <q-select v-model="font" :options="fontOptions" dense />
+            <q-select
+              v-model="font"
+              :options="fontOptions"
+              dense
+              @update:model-value="updateFontFamily"
+            />
           </q-item-section>
         </q-item>
 
@@ -42,7 +47,16 @@
             <q-item-label>Size</q-item-label>
           </q-item-section>
           <q-item-section side>
-            <q-select v-model="fontSize" :options="fontSizeOptions" dense />
+            <q-select
+              v-model="fontSize"
+              :options="fontSizeOptions"
+              option-value="value"
+              option-label="label"
+              label="Font Size"
+              outlined
+              map-options
+              @update:model-value="updateFontSize"
+            />
           </q-item-section>
         </q-item>
       </q-list>
@@ -56,15 +70,56 @@ import { useQuasar } from 'quasar'
 
 const $q = useQuasar()
 
+const savedFont = ref($q.localStorage.getItem('selectedFont'))
+const savedSize = ref($q.localStorage.getItem('selectedSize'))
+
 const notifications = ref(false)
 const darkMode = ref($q.dark.isActive)
-const font = ref('Default')
-const fontSize = ref('Medium')
-const fontOptions = ref(['Default', 'Sans-serif', 'Serif', 'Monospace'])
-const fontSizeOptions = ref(['Small', 'Medium', 'Large'])
+const font = ref('Roboto')
+const fontSize = ref({
+  label: 'Small',
+  value: '1rem',
+})
+const fontOptions = ref(['Roboto', 'Arial', 'Helvetica', 'Times New Roman', 'Georgia', 'Verdana'])
+const fontSizeOptions = ref([
+  {
+    label: 'Small',
+    value: '1rem',
+  },
+  {
+    label: 'Medium',
+    value: '1.5rem',
+  },
+  {
+    label: 'Large',
+    value: '2rem',
+  },
+])
+
+const updateFontFamily = (font) => {
+  document.body.style.fontFamily = font
+  $q.localStorage.setItem('selectedFont', font)
+}
+
+const updateFontSize = (size) => {
+  document.body.style.fontSize = size.value
+  $q.localStorage.setItem('selectedSize', size)
+}
+
+const initFont = () => {
+  if (savedFont.value) {
+    font.value = savedFont.value
+  }
+
+  if (savedSize.value) {
+    fontSize.value = savedSize.value
+  }
+}
 
 const toggleDarkMode = () => {
   $q.dark.set(darkMode.value) // Enable/disable dark mode
   localStorage.setItem('darkMode', darkMode.value.toString()) // Save preference
 }
+
+initFont()
 </script>

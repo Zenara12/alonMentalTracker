@@ -28,7 +28,9 @@
                 header-class="text-weight-bold text-cyan"
               >
                 <q-card>
-                  <q-card-section class="text-cyan"> {{ helpcenter.description }}</q-card-section>
+                  <q-card-section class="text-cyan text-subtitle1">
+                    {{ helpcenter.description }}</q-card-section
+                  >
                 </q-card>
               </q-expansion-item>
             </q-list>
