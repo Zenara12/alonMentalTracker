@@ -14,6 +14,10 @@ const routes = [
       { path: 'healthhotlines', component: () => import('pages/HealthHotlinesPage.vue') },
       { path: 'helpcenter', component: () => import('pages/HelpCenterPage.vue') },
       { path: 'about', component: () => import('pages/AboutPage.vue') },
+      { path: 'about-alon', component: () => import('pages/About/AboutAlonPage.vue') },
+      { path: 'terms', component: () => import('pages/About/TermsOfUsePage.vue') },
+      { path: 'privacy', component: () => import('pages/About/PrivacyAndPolicyPage.vue') },
+      { path: 'references', component: () => import('pages/About/ReferencePage.vue') },
       { path: 'profile', component: () => import('pages/ProfilePage.vue') },
       { path: 'feeling', component: () => import('pages/FeelingPage.vue') },
       {

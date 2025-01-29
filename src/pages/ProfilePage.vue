@@ -136,27 +136,29 @@ import { useQuasar } from 'quasar'
 const $q = useQuasar()
 const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 const currentDate = new Date()
-const profileData = $q.localStorage.getItem('profile')
+const profileData = reactive($q.localStorage.getItem('profile'))
 
 const profile = reactive({
   name: profileData.name,
   age: profileData.age,
   birthday: profileData.birthday,
   email: profileData.email,
+  feeling: profileData.feeling,
 })
-
-//console.log(profileData)
 
 watch(profile, (value) => {
   const birthDate = new Date(value.birthday)
-  value.age = currentDate.getFullYear() - birthDate.getFullYear()
+  let userAge = currentDate.getFullYear() - birthDate.getFullYear()
   if (currentDate.getMonth() < birthDate.getMonth()) {
-    value.age--
+    userAge--
   } else if (currentDate.getMonth() == birthDate.getMonth()) {
     if (currentDate.getDate() <= birthDate.getDate()) {
-      value.age--
+      userAge--
     }
   }
+  value.age = userAge
+  console.log(value)
+  //console.log(currentDate)
   $q.localStorage.set('profile', value)
 })
 </script>
