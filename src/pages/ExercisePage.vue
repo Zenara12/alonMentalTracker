@@ -24,8 +24,9 @@ import { ref, onBeforeUnmount } from 'vue'
 import { useRoute, onBeforeRouteLeave } from 'vue-router'
 
 const route = useRoute()
-
-const audioSrc = new Audio('/audios/exerciseSound.mp3')
+const audioName = route.params.title
+console.log(audioName)
+const audioSrc = new Audio(`/audios/${audioName}.mp3`)
 
 const playAudio = () => {
   audioSrc.play()

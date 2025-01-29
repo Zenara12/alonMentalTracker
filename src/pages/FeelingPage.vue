@@ -41,7 +41,7 @@
               round
               unelevated
               class="q-mr-sm"
-              to="/landing"
+              @click="currentFeeling(mood.feeling)"
             >
               <q-avatar size="30px">
                 <img :src="`/images/${mood.url}`" />
@@ -55,18 +55,32 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { reactive } from 'vue'
 import { useQuasar } from 'quasar'
+import { useRouter } from 'vue-router'
 
 const $q = useQuasar()
+const router = useRouter()
+const profile = reactive($q.localStorage.getItem('profile'))
 
-const profile = ref($q.localStorage.getItem('profile'))
+const currentFeeling = (feeling) => {
+  let currentFeeling = feeling
+  profile.feeling = currentFeeling
+  if (currentFeeling) {
+    $q.localStorage.set('profile', profile)
+    setTimeout(() => {
+      router.push('/landing')
+    }, 1000)
+  }
+  //console.log(profile)
+  //console.log(currentFeeling)
+}
 
 const moods = [
-  { url: 'happy-colored.png' },
-  { url: 'sad-colored.png' },
-  { url: 'angry-colored.png' },
-  { url: 'sick-colored.png' },
-  { url: 'embarassed-colored.png' },
+  { url: 'happy-colored.png', feeling: 'Happy' },
+  { url: 'sad-colored.png', feeling: 'Sad' },
+  { url: 'angry-colored.png', feeling: 'Angry' },
+  { url: 'disgust-colored.png', feeling: 'Disgust' },
+  { url: 'fear-colored.png', feeling: 'Fear' },
 ]
 </script>

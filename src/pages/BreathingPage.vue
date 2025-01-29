@@ -37,10 +37,10 @@ const router = useRouter()
 
 const exercises = ref([
   { name: '1-Minute', duration: 60 },
-  { name: 'Deep-Relaxation', duration: 300 },
-  { name: 'Focus', duration: 180 },
-  { name: 'Anxiety', duration: 240 },
-  { name: 'Sleep', duration: 600 },
+  { name: 'Deep-Relaxation', duration: 600 },
+  { name: 'Focus', duration: 120 },
+  { name: 'Anxiety', duration: 120 },
+  { name: 'Sleep', duration: 1200 },
   { name: 'Stress-Relief', duration: 300 },
 ])
 

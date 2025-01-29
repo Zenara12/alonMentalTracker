@@ -1,5 +1,6 @@
 <template>
   <q-page class="relative-position">
+    <q-img :src="bgImage" class="fit absolute"></q-img>
     <!-- Scattered buttons -->
     <div class="full-height full-width">
       <!-- Top section - Inhale, Exhale -->
@@ -43,9 +44,16 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
+import { reactive, ref } from 'vue'
 
 const router = useRouter()
+const $q = useQuasar()
 
+const profile = reactive($q.localStorage.getItem('profile'))
+
+const bgImage = ref(`/videos/${profile.feeling}.gif`)
+//console.log(bgImage.value)
 const bubbleUrl = '/images/bubble.png'
 const navigateTo = (route = 'breathing') => {
   router.push(route)

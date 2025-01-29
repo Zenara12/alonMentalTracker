@@ -97,6 +97,7 @@ const profile = reactive({
   age: '0',
   birthday: new Date(),
   email: '',
+  feeling: '',
 })
 
 const registerUser = () => {
@@ -108,7 +109,7 @@ const registerUser = () => {
 
 onMounted(() => {
   const profile = $q.localStorage.getItem('profile')
-  if (profile) router.push('/landing')
+  if (profile) router.push('/feeling')
 })
 </script>
 
