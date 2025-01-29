@@ -26,14 +26,12 @@ import { useRoute, onBeforeRouteLeave } from 'vue-router'
 
 const route = useRoute()
 const audioName = route.params.title
-console.log(audioName)
 const audioSrc = new Audio(`/audios/${audioName}.mp3`)
 
 const playAudio = () => {
   audioSrc.play()
 }
 playAudio()
-//console.log(route.params)
 const timeLeft = ref(route.params.duration)
 const minutes = (timeLeft) => Math.floor(timeLeft / 60)
 const seconds = (timeLeft) => (timeLeft % 60).toString().padStart(2, '0')

@@ -11,11 +11,27 @@
         <q-card class="transparent" flat>
           <!-- Profile Image -->
           <q-card-section class="text-center q-pt-xl">
-            <q-avatar size="120px" borderd>
-              <q-img src="/images/picture.png" ratio="1" loading="lazy" spinner-color="primary">
+            <q-avatar size="120px">
+              <q-img
+                :src="profilePic.url"
+                ratio="1"
+                loading="lazy"
+                spinner-color="primary"
+                placeholder-src="/images/picture.png"
+              >
                 <template v-slot:loading>
                   <div class="text-grey-8 text-center q-pa-md">Loading...</div>
                 </template>
+                <div class="absolute-bottom-right text-subtitle2 bg-transparent">
+                  <q-btn
+                    icon="edit"
+                    color="primary"
+                    outline
+                    dense=""
+                    round
+                    @click="showPicUpload = true"
+                  />
+                </div>
               </q-img>
             </q-avatar>
             <div class="text-h6 text-weight-bold">
@@ -60,13 +76,47 @@
               </div>
             </div>
           </q-card-section>
+          <q-dialog v-model="showPicUpload" persistent>
+            <q-card>
+              <q-card-section class="row items-center">
+                <q-file
+                  v-model="picture"
+                  label="Select a file/photo"
+                  filled
+                  outlined
+                  accept="image/*,"
+                >
+                  <template v-slot:append>
+                    <q-icon name="attach_file" />
+                  </template>
+                </q-file>
+
+                <div v-if="picture != null" class="q-mt-md text-green">
+                  <q-icon name="check_circle" color="green" />
+                  File Saved: {{ picture.value }}
+                </div>
+              </q-card-section>
+
+              <q-card-actions align="right">
+                <q-btn flat label="Cancel" color="primary" v-close-popup @click="resetUploader" />
+                <q-btn
+                  flat
+                  label="Save"
+                  color="primary"
+                  v-close-popup
+                  :disable="!picture"
+                  @click="uploadFile"
+                />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
 
           <!-- Profile Form -->
-          <q-card-section class="q-pa-sm q-ma-md rounded transparent-card-60">
+          <q-card-section class="q-pa-sm q-ma-md rounded transparent-card-40">
             <div class="text-h6 text-weight-bold">Age:{{ profile.age }}</div>
           </q-card-section>
 
-          <q-card-section class="q-pa-sm q-ma-md rounded transparent-card-60">
+          <q-card-section class="q-pa-sm q-ma-md rounded transparent-card-40">
             <div class="text-h6 text-weight-bold">Birthday:</div>
             <q-input filled v-model="profile.birthday" mask="date" :rules="['date']">
               <template v-slot:append>
@@ -83,7 +133,7 @@
             </q-input>
           </q-card-section>
 
-          <q-card-section class="q-pa-sm q-ma-md rounded transparent-card-60">
+          <q-card-section class="q-pa-sm q-ma-md rounded transparent-card-40">
             <div class="text-h6 text-weight-bold cursor-pointer">
               Email:{{ profile.email }}
               <q-popup-edit
@@ -130,13 +180,17 @@
 </template>
 
 <script setup>
-import { reactive, watch } from 'vue'
+import { reactive, watch, onMounted, ref } from 'vue'
 import { useQuasar } from 'quasar'
+import { saveFile, getFiles } from 'boot/filesystem'
 
 const $q = useQuasar()
 const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 const currentDate = new Date()
 const profileData = reactive($q.localStorage.getItem('profile'))
+const profilePic = ref({ name: '', path: '', url: null })
+const showPicUpload = ref(false)
+const picture = ref(null)
 
 const profile = reactive({
   name: profileData.name,
@@ -145,6 +199,32 @@ const profile = reactive({
   email: profileData.email,
   feeling: profileData.feeling,
 })
+
+const resetUploader = () => {
+  picture.value = null
+  showPicUpload.value = false
+}
+
+const fetchSavedFiles = async () => {
+  profilePic.value = await getFiles()
+  console.log(profilePic.value)
+}
+
+const uploadFile = async () => {
+  if (!picture.value) {
+    alert('No file selected!')
+    return
+  }
+
+  try {
+    await saveFile(picture.value)
+    fetchSavedFiles()
+  } catch (error) {
+    alert('Failed to save file.' + error)
+  }
+}
+
+onMounted(fetchSavedFiles)
 
 watch(profile, (value) => {
   const birthDate = new Date(value.birthday)
@@ -157,8 +237,6 @@ watch(profile, (value) => {
     }
   }
   value.age = userAge
-  console.log(value)
-  //console.log(currentDate)
   $q.localStorage.set('profile', value)
 })
 </script>

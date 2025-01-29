@@ -35,8 +35,8 @@
       </div>
     </div>
 
-    <q-form v-else>
-      <q-card class="q-pa-md transparent-card-60">
+    <q-form v-else class="text-primary">
+      <q-card class="q-pa-md transparent-card-40">
         <q-input v-model="journalForm.title" label="Title" outlined class="q-mb-md text-white" />
         <q-input v-model="journalForm.note" type="textarea" label="Note" outlined autogrow />
         <div class="row q-mt-md">
@@ -58,7 +58,7 @@
         </div>
       </q-card>
 
-      <q-card class="q-mt-md q-pa-md transparent-card-60">
+      <q-card class="q-mt-md q-pa-md transparent-card-40">
         <div class="text-h6 text-weight-bolder">3 Things I'm grateful for today</div>
         <q-input
           v-for="n in 3"
@@ -70,7 +70,7 @@
         />
       </q-card>
 
-      <q-card class="q-mt-md q-pa-md transparent-card-60">
+      <q-card class="q-mt-md q-pa-md transparent-card-40">
         <div class="text-h6 text-weight-bold">Rate your day</div>
         <div class="row justify-center q-mt-sm">
           <q-rating

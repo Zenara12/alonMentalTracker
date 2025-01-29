@@ -118,7 +118,7 @@ const initFont = () => {
 
 const toggleDarkMode = () => {
   $q.dark.set(darkMode.value) // Enable/disable dark mode
-  localStorage.setItem('darkMode', darkMode.value.toString()) // Save preference
+  $q.localStorage.setItem('darkMode', darkMode.value.toString()) // Save preference
 }
 
 initFont()

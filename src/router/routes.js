@@ -21,7 +21,7 @@ const routes = [
       { path: 'profile', component: () => import('pages/ProfilePage.vue') },
       { path: 'feeling', component: () => import('pages/FeelingPage.vue') },
       {
-        path: 'exercise/:title/:duration',
+        path: 'exercise/:title/:duration/:rname',
         name: 'exercise',
         component: () => import('pages/ExercisePage.vue'),
         props: true,

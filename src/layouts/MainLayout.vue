@@ -59,6 +59,27 @@ const router = useRouter()
 const route = useRoute()
 const showMenu = ref(true)
 
+const audioBg = new Audio('/audios/alon-bg-music.mp3')
+audioBg.loop = true
+const userInteracted = ref(false)
+
+const playAudio = () => {
+  if (userInteracted.value && audioBg.paused) {
+    audioBg.play().catch((err) => console.error('Audio play error:', err))
+  }
+}
+
+const pauseAudio = () => {
+  if (!audioBg.paused) {
+    audioBg.pause()
+  }
+}
+
+const enableAudio = () => {
+  userInteracted.value = true
+  playAudio() // Attempt to play audio after interaction
+}
+
 const selectedFont = ref('Roboto')
 const selectedSize = ref({
   label: 'Small',
@@ -90,13 +111,14 @@ const initFontPreferences = () => {
 }
 const toggleDarkMode = () => {
   $q.dark.set(darkMode.value) // Enable/disable dark mode
-  localStorage.setItem('darkMode', darkMode.value.toString()) // Save preference
+  $q.localStorage.setItem('darkMode', darkMode.value.toString()) // Save preference
 }
 
 onMounted(() => {
   useBackButton()
   showMenu.value = route.path != '/' && route.path != '/registration' ? true : false
   initFontPreferences()
+  document.addEventListener('click', enableAudio, { once: true }) // Only triggers once
   if (darkMode.value) {
     toggleDarkMode()
   }
@@ -104,10 +126,15 @@ onMounted(() => {
 
 //check if index or not
 watch(
-  () => route.path,
-  (newPath) => {
-    showMenu.value = newPath != '/' && newPath != '/registration' ? true : false
-    //console.log(`Navigated from ${oldPath} to ${newPath}`)
+  () => ({ rname: route.params.rname, path: route.path }),
+  ({ rname, path }) => {
+    showMenu.value = path != '/' && path != '/registration' ? true : false
+
+    if (rname !== 'exercise') {
+      playAudio()
+    } else {
+      pauseAudio()
+    }
   },
 )
 

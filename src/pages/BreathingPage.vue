@@ -49,7 +49,7 @@ const startExercise = (exercise) => {
   //console.log(`Starting ${exercise.name} exercise`)
   router.push({
     name: 'exercise',
-    params: { title: exercise.name, duration: exercise.duration },
+    params: { title: exercise.name, duration: exercise.duration, rname: 'exercise' },
   })
 }
 </script>
