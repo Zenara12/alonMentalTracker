@@ -122,6 +122,11 @@ onMounted(() => {
   if (darkMode.value) {
     toggleDarkMode()
   }
+  if (route.params.rname !== 'exercise' && route.path !== '/journal') {
+    playAudio()
+  } else {
+    pauseAudio()
+  }
 })
 
 //check if index or not
@@ -130,7 +135,7 @@ watch(
   ({ rname, path }) => {
     showMenu.value = path != '/' && path != '/registration' ? true : false
 
-    if (rname !== 'exercise') {
+    if (rname !== 'exercise' && path !== '/journal') {
       playAudio()
     } else {
       pauseAudio()

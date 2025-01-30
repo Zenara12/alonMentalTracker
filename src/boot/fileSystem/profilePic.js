@@ -38,7 +38,7 @@ export async function saveFile(file) {
 export async function getFiles() {
   const savedFiles = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') // ✅ FIX: Default to empty array if null
   let image = { name: '', path: '', url: null }
-  console.log(savedFiles)
+
   if (savedFiles.length != 0) {
     try {
       const readFile = await Filesystem.readFile({

@@ -182,7 +182,7 @@
 <script setup>
 import { reactive, watch, onMounted, ref } from 'vue'
 import { useQuasar } from 'quasar'
-import { saveFile, getFiles } from 'boot/filesystem'
+import { saveFile, getFiles } from 'src/boot/fileSystem/profilePic.js'
 
 const $q = useQuasar()
 const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
@@ -207,7 +207,6 @@ const resetUploader = () => {
 
 const fetchSavedFiles = async () => {
   profilePic.value = await getFiles()
-  console.log(profilePic.value)
 }
 
 const uploadFile = async () => {

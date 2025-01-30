@@ -12,7 +12,7 @@
         style="width: 50%"
       >
         <q-card class="transparent-card-60" rounded bordered>
-          <q-item @click="showForm(index)">
+          <q-item @click="noteDisplay(index)">
             <q-item-section>
               <q-item-label class="text-h6 text-weight-bolder">{{ journal.title }}</q-item-label>
               <q-item-label caption
@@ -21,12 +21,17 @@
               </q-item-label>
             </q-item-section>
           </q-item>
-          <q-card-section @click="showForm(index)">
-            <div class="text-h6 text-weight-bolder"></div>
+          <q-card-section @click="noteDisplay(index)">
             <div class="text-subtitle1">{{ journal.note }}</div>
-            <div class="text-subtitle2" v-for="(item, index) in journal.gratefulItems" :key="index">
-              {{ item }}
-            </div>
+            <q-list dense>
+              <q-item
+                class="text-subtitle2"
+                v-for="(item, index) in journal.gratefulItems"
+                :key="index"
+              >
+                {{ item }}
+              </q-item>
+            </q-list>
           </q-card-section>
           <q-card-actions align="right">
             <q-btn @click="deleteJournal(index)" icon="delete" flat color="primary"></q-btn>
@@ -40,22 +45,68 @@
         <q-input v-model="journalForm.title" label="Title" outlined class="q-mb-md text-white" />
         <q-input v-model="journalForm.note" type="textarea" label="Note" outlined autogrow />
         <div class="row q-mt-md">
-          <q-btn unelevated>
-            <q-avatar size="30px">
-              <img src="/images/picture.png" />
+          <!--File Input-->
+          <q-file
+            accept="image/*"
+            ref="fileImage"
+            style="display: none"
+            @update:model-value="fileSelected"
+          />
+          <q-file
+            accept="audio/*"
+            ref="fileAudio"
+            style="display: none"
+            @update:model-value="fileSelected"
+          />
+          <q-file
+            accept="video/*"
+            ref="fileVideo"
+            style="display: none"
+            @update:model-value="fileSelected"
+          />
+          <!--File Button-->
+          <q-btn rounded unelevated dense @click="triggerFileInput('image')">
+            <q-avatar :size="fileIconSize">
+              <img src="/images/photo.png" />
             </q-avatar>
           </q-btn>
-          <q-btn unelevated>
-            <q-avatar size="30px">
+          <q-btn rounded unelevated dense @click="triggerFileInput('audio')" class="q-mx-md">
+            <q-avatar :size="fileIconSize">
               <img src="/images/mic.png" />
             </q-avatar>
           </q-btn>
-          <q-btn unelevated>
-            <q-avatar size="30px">
+          <q-btn rounded unelevated dense @click="triggerFileInput('video')">
+            <q-avatar :size="fileIconSize">
               <img src="/images/video.png" />
             </q-avatar>
           </q-btn>
         </div>
+        <q-list separator bordered>
+          <q-item class="q-my-sm" v-for="(file, index) in compiledFiles" :key="index">
+            <q-item-section>{{ file.name }}</q-item-section>
+            <q-item-section avatar>
+              <q-btn
+                flat
+                color="red"
+                icon="delete"
+                @click="deleteCurrentFile(index, 'compiled')"
+              ></q-btn>
+            </q-item-section>
+          </q-item>
+          <div v-if="crudData !== 'insert'">
+            <q-item class="q-my-sm" v-for="(file, index) in journalFiles" :key="index">
+              <q-item-section>{{ file.name }}</q-item-section>
+              <q-item-section avatar>
+                <q-btn
+                  flat
+                  color="red"
+                  icon="delete"
+                  @click="deleteCurrentFile(index, 'journal')"
+                ></q-btn>
+              </q-item-section>
+            </q-item>
+          </div>
+        </q-list>
       </q-card>
 
       <q-card class="q-mt-md q-pa-md transparent-card-40">
@@ -104,6 +155,71 @@
         />
       </div>
     </q-form>
+
+    <q-dialog v-model="displayNote" full-width style="height: auto; text-wrap: balance">
+      <q-card class="bg-primary text-white" style="max-width: 300px">
+        <q-card-section align="center">
+          <div class="text-h6">
+            <div class="absolute-top-left text-subtitle1 q-ml-sm q-mt-md q-pa-none">
+              <q-icon name="star" color="yellow" />
+              {{ journals[currentEditIndex].dayRating }}
+            </div>
+            <div class="absolute-top-right q-mt-md q-mr-sm text-subtitle2">
+              {{ formattedDate(journals[currentEditIndex].dateCreated) }}
+            </div>
+
+            {{ journals[currentEditIndex].title }}
+          </div>
+        </q-card-section>
+
+        <q-card-section>
+          {{ journals[currentEditIndex].note }}
+        </q-card-section>
+        <q-card-section class="col q-pt-none">
+          <q-list>
+            <q-item v-for="(item, index) in journals[currentEditIndex].gratefulItems" :key="index">
+              <q-item-section>
+                {{ item }}
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-card-section>
+        <q-card-section>
+          <q-list>
+            <q-item v-for="(item, index) in journalFiles" :key="index">
+              <q-item-section>
+                <q-img
+                  v-if="item.type === 'image'"
+                  :src="item.url"
+                  fit="scale-down"
+                  loading="lazy"
+                  spinner-color="white"
+                  :ratio="1"
+                />
+                <q-video
+                  v-else-if="item.type === 'video'"
+                  loading="lazy"
+                  :src="item.url"
+                  :ratio="16 / 9"
+                />
+                <div v-else-if="item.type === 'audio'">
+                  <audio controls>
+                    <source :src="item.url" type="audio/mp3" />
+                    Your device does not support the audio tag.
+                  </audio>
+                </div>
+                {{ item.name }}
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-card-section>
+        <q-card-actions align="right" class="bg-white text-teal">
+          <q-btn flat icon="edit" @click="showForm(currentEditIndex)" v-close-popup></q-btn>
+          <q-btn flat icon="close" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
     <q-page-sticky position="bottom-right" :offset="[18, 18]" v-if="showJournals">
       <q-btn fab icon="add" color="primary" @click="showForm('insert')" />
     </q-page-sticky>
@@ -111,17 +227,21 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive, watch, onBeforeMount } from 'vue'
 import { useQuasar } from 'quasar'
+import { saveFile, getFiles } from 'src/boot/fileSystem/journal.js'
 
 const $q = useQuasar()
 const journalDatas = $q.localStorage.getItem('journals')
 //const currentDate = new Date()
+const displayNote = ref(false)
+const currentEditIndex = ref(0)
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 const crudData = ref('')
-
+const fileIconSize = '2rem'
 const journals = reactive([])
+const journalFiles = ref([])
 
 const journalForm = ref({
   title: '',
@@ -129,6 +249,38 @@ const journalForm = ref({
   gratefulItems: ['', '', ''],
   dayRating: 0,
 })
+
+const fileImage = ref(null)
+const fileAudio = ref(null)
+const fileVideo = ref(null)
+const compiledFiles = ref([])
+
+const triggerFileInput = (input) => {
+  if (input === 'image') fileImage.value.$el.click()
+  if (input === 'audio') fileAudio.value.$el.click()
+  if (input === 'video') fileVideo.value.$el.click()
+}
+
+const fileSelected = (newFile) => {
+  compiledFiles.value.push(newFile)
+  //console.log(compiledFiles.value[0].name)
+}
+
+const deleteCurrentFile = (index, pointer) => {
+  if (pointer === 'compiled') compiledFiles.value.splice(index, 1)
+  else if (pointer === 'journal') journalFiles.value.splice(index, 1)
+}
+
+const noteDisplay = async (index) => {
+  displayNote.value = true
+  currentEditIndex.value = index
+  journalFiles.value = journals[currentEditIndex.value].fileUploads
+  journalFiles.value = await Promise.all(
+    journalFiles.value.map((value) => {
+      return getFiles(value)
+    }),
+  )
+}
 
 const insertJournal = (journalEntry) => {
   journals.push(journalEntry)
@@ -148,20 +300,41 @@ const editJournal = (index) => {
   showJournals.value = false
 }
 
-const saveJournal = () => {
-  const journalEntry = {
-    title: journalForm.value.title,
-    note: journalForm.value.note,
-    gratefulItems: journalForm.value.gratefulItems,
-    dayRating: journalForm.value.dayRating,
-    dateCreated: new Date(),
+const saveJournal = async () => {
+  try {
+    let finalFile = []
+    let fileUpload = compiledFiles.value
+    if (fileUpload.length > 0) {
+      fileUpload = await Promise.all(
+        fileUpload.map((value) => {
+          return saveFile(value)
+        }),
+      )
+    }
+    finalFile = [...fileUpload]
+    let fileJournal = journals[currentEditIndex.value].fileUploads
+    if (fileJournal.length > 0) {
+      finalFile = [...fileUpload, ...fileJournal]
+      console.log(finalFile)
+    }
+
+    const journalEntry = {
+      title: journalForm.value.title,
+      note: journalForm.value.note,
+      gratefulItems: journalForm.value.gratefulItems,
+      dayRating: journalForm.value.dayRating,
+      dateCreated: new Date(),
+      fileUploads: finalFile,
+    }
+    if (crudData.value === 'insert') {
+      insertJournal(journalEntry)
+    } else {
+      updateJournal(crudData.value, journalEntry)
+    }
+    clearForm()
+  } catch (error) {
+    console.log('error:', error)
   }
-  if (crudData.value === 'insert') {
-    insertJournal(journalEntry)
-  } else {
-    updateJournal(crudData.value, journalEntry)
-  }
-  clearForm()
 }
 
 const showForm = (value) => {
@@ -177,6 +350,10 @@ const clearForm = () => {
   journalForm.value.note = ''
   journalForm.value.gratefulItems = ['', '', '']
   journalForm.value.dayRating = 0
+  fileImage.value = null
+  fileAudio.value = null
+  fileVideo.value = null
+  compiledFiles.value = []
   showJournals.value = true
 }
 
@@ -188,9 +365,16 @@ const formattedDate = (date) => {
 
 if (journalDatas) Object.assign(journals, journalDatas)
 const showJournals = ref(true)
-//console.log(journalDatas)
-//console.log(journals)
 watch(journals, (value) => {
   $q.localStorage.set('journals', value)
+})
+
+onBeforeMount(() => {
+  // Clean up blob URLs
+  journalFiles.value.forEach((file) => {
+    if (file.type === 'video' && file.url) {
+      URL.revokeObjectURL(file.url)
+    }
+  })
 })
 </script>
