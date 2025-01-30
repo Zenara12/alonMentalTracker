@@ -36,12 +36,30 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const exercises = ref([
-  { name: '1-Minute', duration: 60 },
-  { name: 'Deep-Relaxation', duration: 600 },
-  { name: 'Focus', duration: 120 },
-  { name: 'Anxiety', duration: 120 },
-  { name: 'Sleep', duration: 1200 },
-  { name: 'Stress-Relief', duration: 300 },
+  {
+    name: '1-Minute',
+    duration: 60,
+  },
+  {
+    name: 'Focus',
+    duration: 120,
+  },
+  {
+    name: 'Sleep',
+    duration: 1200,
+  },
+  {
+    name: 'Deep-Relaxation',
+    duration: 600,
+  },
+  {
+    name: 'Anxiety',
+    duration: 120,
+  },
+  {
+    name: 'Stress-Relief',
+    duration: 300,
+  },
 ])
 
 const startExercise = (exercise) => {
@@ -49,7 +67,11 @@ const startExercise = (exercise) => {
   //console.log(`Starting ${exercise.name} exercise`)
   router.push({
     name: 'exercise',
-    params: { title: exercise.name, duration: exercise.duration, rname: 'exercise' },
+    params: {
+      title: exercise.name,
+      duration: exercise.duration,
+      rname: 'exercise',
+    },
   })
 }
 </script>

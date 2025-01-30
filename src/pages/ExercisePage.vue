@@ -4,8 +4,9 @@
     <div class="absolute-full column items-center justify-center q-pa-md">
       <q-img src="/images/bubble.png" spinner-color="primary" width="300px" height="auto">
         <div class="fixed-center text-h3 text-center bg-transparent text-white">
-          <div class="text-h3 text-shadow">{{ route.params.title }}</div>
-          <div class="text-h4">{{ minutes(timeLeft) }}:{{ seconds(timeLeft) }}</div>
+          <div class="text-h3 text-shadow">{{ currentPhase.name }}</div>
+          <p>{{ countdown }}s</p>
+          <div class="text-subtitle1">{{ minutes(timeLeft) }}:{{ seconds(timeLeft) }}</div>
         </div>
       </q-img>
       <q-btn
@@ -25,8 +26,8 @@ import { ref, onBeforeUnmount } from 'vue'
 import { useRoute, onBeforeRouteLeave } from 'vue-router'
 
 const route = useRoute()
-const audioName = route.params.title
-const audioSrc = new Audio(`/audios/${audioName}.mp3`)
+const audioName = ref(route.params.title)
+const audioSrc = new Audio(`/audios/${audioName.value}.mp3`)
 
 const playAudio = () => {
   audioSrc.play()
@@ -36,12 +37,86 @@ const timeLeft = ref(route.params.duration)
 const minutes = (timeLeft) => Math.floor(timeLeft / 60)
 const seconds = (timeLeft) => (timeLeft % 60).toString().padStart(2, '0')
 
+const technique = new Map([
+  [
+    '1-Minute',
+    [
+      { name: 'Inhale', duration: 4 },
+      { name: 'Hold', duration: 4 },
+      { name: 'Exhale', duration: 4 },
+      { name: 'Hold', duration: 4 },
+    ],
+  ],
+  [
+    'Focus',
+    [
+      { name: 'Inhale', duration: 4 },
+      { name: 'Hold', duration: 2 },
+      { name: 'Exhale', duration: 4 },
+      { name: 'Hold', duration: 2 },
+    ],
+  ],
+  [
+    'Sleep',
+    [
+      { name: 'Inhale', duration: 4 },
+      { name: 'Hold', duration: 7 },
+      { name: 'Exhale', duration: 8 },
+    ],
+  ],
+  [
+    'Deep-Relaxation',
+    [
+      { name: 'Inhale', duration: 4 },
+      { name: 'Hold', duration: 7 },
+      { name: 'Exhale', duration: 8 },
+    ],
+  ],
+  [
+    'Anxiety',
+    [
+      { name: 'Inhale', duration: 4 },
+      { name: 'Hold', duration: 7 },
+      { name: 'Exhale', duration: 8 },
+    ],
+  ],
+  [
+    'Stress-Relief',
+    [
+      { name: 'Inhale', duration: 4 },
+      { name: 'Hold', duration: 4 },
+      { name: 'Exhale', duration: 6 },
+      { name: 'Hold', duration: 2 },
+    ],
+  ],
+])
+
+const currentPhase = ref(technique.get(audioName.value)[0])
+console.log(currentPhase.value)
+const countdown = ref(currentPhase.value.duration)
+let phaseIndex = 0
+
+const startBreathingCycle = () => {
+  countdown.value -= 1
+
+  if (countdown.value <= 0) {
+    // Move to the next phase
+    phaseIndex = (phaseIndex + 1) % technique.get(audioName.value).length
+    currentPhase.value = technique.get(audioName.value)[phaseIndex]
+    countdown.value = currentPhase.value.duration
+  }
+}
+
 const startTimer = () => {
   if (timeLeft.value > 0) {
     setTimeout(() => {
       timeLeft.value--
       startTimer()
+      startBreathingCycle()
     }, 1000)
+  } else {
+    currentPhase.value.name = 'Done'
+    countdown.value = 0
   }
 }
 
