@@ -66,6 +66,7 @@ export async function getFiles(file) {
         path: savedFiles.path,
         url: blobUrl,
         type: fileType,
+        returnData: { ...savedFiles },
       }
     } else {
       // Handle images as before with data URL
@@ -75,6 +76,7 @@ export async function getFiles(file) {
         path: savedFiles.path,
         url: fileUrl,
         type: fileType,
+        returnData: { ...savedFiles },
       }
     }
     return media

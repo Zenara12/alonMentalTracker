@@ -186,7 +186,7 @@
         </q-card-section>
         <q-card-section>
           <q-list>
-            <q-item v-for="(item, index) in journalFiles" :key="index">
+            <q-item v-for="(item, index) in journalFiles.value" :key="index">
               <q-item-section>
                 <q-img
                   v-if="item.type === 'image'"
@@ -241,7 +241,7 @@ const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 const crudData = ref('')
 const fileIconSize = '2rem'
 const journals = reactive([])
-const journalFiles = ref([])
+const journalFiles = reactive([])
 
 const journalForm = ref({
   title: '',
@@ -267,19 +267,25 @@ const fileSelected = (newFile) => {
 }
 
 const deleteCurrentFile = (index, pointer) => {
-  if (pointer === 'compiled') compiledFiles.value.splice(index, 1)
-  else if (pointer === 'journal') journalFiles.value.splice(index, 1)
+  if (pointer === 'compiled') {
+    compiledFiles.value.splice(index, 1)
+  } else if (pointer === 'journal') {
+    //console.log(journalFiles)
+    journalFiles.splice(index, 1)
+    journalFiles.value.splice(index, 1)
+  }
 }
 
 const noteDisplay = async (index) => {
   displayNote.value = true
   currentEditIndex.value = index
-  journalFiles.value = journals[currentEditIndex.value].fileUploads
+  Object.assign(journalFiles, journals[currentEditIndex.value].fileUploads)
   journalFiles.value = await Promise.all(
-    journalFiles.value.map((value) => {
-      return getFiles(value)
+    journalFiles.map(async (value) => {
+      return await getFiles(value)
     }),
   )
+  //console.log(journalFiles.value)
 }
 
 const insertJournal = (journalEntry) => {
@@ -303,19 +309,24 @@ const editJournal = (index) => {
 const saveJournal = async () => {
   try {
     let finalFile = []
-    let fileUpload = compiledFiles.value
-    if (fileUpload.length > 0) {
-      fileUpload = await Promise.all(
-        fileUpload.map((value) => {
-          return saveFile(value)
-        }),
-      )
+    let fileUpload = []
+    if (compiledFiles.value !== undefined) {
+      fileUpload = compiledFiles.value
+      if (fileUpload.length > 0) {
+        fileUpload = await Promise.all(
+          fileUpload.map((value) => {
+            return saveFile(value)
+          }),
+        )
+      }
     }
     finalFile = [...fileUpload]
-    let fileJournal = journals[currentEditIndex.value].fileUploads
-    if (fileJournal.length > 0) {
-      finalFile = [...fileUpload, ...fileJournal]
-      console.log(finalFile)
+    console.log(journalFiles)
+    if (crudData.value !== 'insert' && journalFiles.value.length > 0) {
+      let JournalS = journalFiles.value.map((value) => {
+        return value.returnData
+      })
+      finalFile = [...fileUpload, ...JournalS]
     }
 
     const journalEntry = {
@@ -371,7 +382,7 @@ watch(journals, (value) => {
 
 onBeforeMount(() => {
   // Clean up blob URLs
-  journalFiles.value.forEach((file) => {
+  journalFiles.forEach((file) => {
     if (file.type === 'video' && file.url) {
       URL.revokeObjectURL(file.url)
     }

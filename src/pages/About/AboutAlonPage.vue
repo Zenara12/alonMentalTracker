@@ -5,7 +5,7 @@
       <div class="text-white text-h5">About ALON</div>
     </div>
 
-    <div class="q-pa-sm">
+    <div class="q-pa-sm text-justify">
       <q-card flat bordered class="bg-white text-cyan">
         <q-card-section>
           <p class="text-body1 q-mb-lg">

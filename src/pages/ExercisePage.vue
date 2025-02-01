@@ -4,8 +4,11 @@
     <div class="absolute-full column items-center justify-center q-pa-md">
       <q-img src="/images/bubble.png" spinner-color="primary" width="300px" height="auto">
         <div class="fixed-center text-h3 text-center bg-transparent text-white">
-          <div class="text-h3 text-shadow">{{ currentPhase.name }}</div>
-          <p>{{ countdown }}s</p>
+          <div v-if="timeLeft !== 0">
+            <div class="text-h3 text-shadow">{{ currentPhase.name }}</div>
+            <p>{{ countdown }}s</p>
+          </div>
+          <div v-else class="text-h4 text-shadow">Done Exercise</div>
           <div class="text-subtitle1">{{ minutes(timeLeft) }}:{{ seconds(timeLeft) }}</div>
         </div>
       </q-img>
@@ -92,7 +95,6 @@ const technique = new Map([
 ])
 
 const currentPhase = ref(technique.get(audioName.value)[0])
-console.log(currentPhase.value)
 const countdown = ref(currentPhase.value.duration)
 let phaseIndex = 0
 
@@ -114,9 +116,6 @@ const startTimer = () => {
       startTimer()
       startBreathingCycle()
     }, 1000)
-  } else {
-    currentPhase.value.name = 'Done'
-    countdown.value = 0
   }
 }
 

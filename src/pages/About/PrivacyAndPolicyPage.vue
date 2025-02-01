@@ -11,7 +11,7 @@ const ulClass = 'text-subtitle1'
       <div class="text-white text-h5">Privacy and Policy</div>
     </div>
 
-    <div class="q-pa-md">
+    <div class="q-pa-md text-justify">
       <q-card flat bordered class="bg-white text-cyan">
         <q-card-section>
           <p class="text-body1 q-mb-md">

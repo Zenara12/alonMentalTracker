@@ -5,7 +5,7 @@
       <div class="text-white text-h5">References</div>
     </div>
 
-    <div class="q-pa-md">
+    <div class="q-pa-md text-justify">
       <q-card flat bordered class="bg-white">
         <q-card-section>
           <q-list>

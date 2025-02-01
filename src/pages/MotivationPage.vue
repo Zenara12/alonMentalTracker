@@ -4,49 +4,78 @@
       <div class="text-h4 text-weight-bolder text-white q-mb-lg">MOTIVATION</div>
 
       <div class="text-h6 text-weight-bolder text-white q-mb-md">BIBLE VERSES</div>
-
-      <q-card
-        v-for="(verse, index) in randomBible"
-        :key="index"
-        class="q-pa-md q-mb-md transparent-card-40"
+      <q-carousel
+        v-model="slide"
+        transition-prev="jump-right"
+        transition-next="jump-left"
+        swipeable
+        animated
+        control-color="white"
+        prev-icon="arrow_left"
+        next-icon="arrow_right"
+        padding
+        arrows
+        infinite
+        height="200px"
+        class="transparent-card-40 rounded-borders"
       >
-        <q-card-section>
-          <div class="text-center text-weight-bold">{{ verse.text }}</div>
-          <div class="text-right">{{ verse.reference }}</div>
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn
-            flat
-            icon="favorite"
-            :color="verse.toggle ? 'info' : 'grey'"
-            @click="toggleHeart(index, 'bible')"
-            round
-            size="md"
-          />
-        </q-card-actions>
-      </q-card>
+        <q-carousel-slide
+          v-for="(verse, index) in shuffleVerse"
+          :key="index"
+          class="q-pa-md transparent-card-40"
+          :name="index"
+        >
+          <div class="text-weight-bold text-justify">{{ verse.text }}</div>
+          <div class="text-right">~{{ verse.reference }}</div>
+          <div class="absolute-bottom-right q-mr-xl q-mb-md">
+            <q-btn
+              flat
+              icon="favorite"
+              :color="verse.toggle ? 'accent' : 'grey'"
+              @click="toggleHeart(index, 'bible')"
+              round
+              size="md"
+            />
+          </div>
+        </q-carousel-slide>
+      </q-carousel>
 
       <div class="text-h6 text-weight-bolder q-mb-md q-mt-lg">AFFIRMATIONS</div>
-
-      <q-card
-        v-for="(affirmation, index) in randomAffirmation"
-        :key="index"
-        class="transparent-card-40 q-pa-md q-mb-md"
+      <q-carousel
+        v-model="slide2"
+        transition-prev="jump-right"
+        transition-next="jump-left"
+        swipeable
+        animated
+        control-color="white"
+        prev-icon="arrow_left"
+        next-icon="arrow_right"
+        padding
+        arrows
+        infinite
+        height="200px"
+        class="transparent-card-40 rounded-borders"
       >
-        <q-card-section class="text-center text-weight-bold">
-          {{ affirmation.text }}
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn
-            flat
-            icon="favorite"
-            :color="affirmation.toggle ? 'info' : 'grey'"
-            @click="toggleHeart(index, 'affirmation')"
-            round
-            size="md"
-          />
-        </q-card-actions>
-      </q-card>
+        <q-carousel-slide
+          v-for="(affirmation, index) in shuffleAffirmation"
+          :key="index"
+          class="q-pa-md transparent-card-40"
+          :name="index"
+        >
+          <div class="text-weight-bold text-justify">{{ affirmation.text }}</div>
+          <div class="text-right">~{{ affirmation.reference }}</div>
+          <div class="absolute-bottom-right q-mr-xl q-mb-md">
+            <q-btn
+              flat
+              icon="favorite"
+              :color="affirmation.toggle ? 'accent' : 'grey'"
+              @click="toggleHeart(index, 'affirmation')"
+              round
+              size="md"
+            />
+          </div>
+        </q-carousel-slide>
+      </q-carousel>
     </section>
   </q-page>
 </template>
@@ -54,17 +83,17 @@
 <script setup>
 import { computed, ref } from 'vue'
 
+const slide = ref(0)
+const slide2 = ref(0)
+
 const toggleHeart = (index, section) => {
   if (section === 'bible') {
-    bibleVerses[index].toggle = !bibleVerses[index].toggle
+    shuffleVerse.value[index].toggle = !shuffleVerse.value[index].toggle
+    console.log()
   } else if (section === 'affirmation') {
-    affirmations[index].toggle = !affirmations[index].toggle
+    shuffleAffirmation.value[index].toggle = !shuffleAffirmation.value[index].toggle
   }
 }
-
-const randomBible = computed(() => shuffleArray([...bibleVerses.value]).slice(0, 5))
-const randomAffirmation = computed(() => shuffleArray([...affirmations.value]).slice(0, 5))
-
 const shuffleArray = (array) => {
   return array.sort(() => Math.random() - 0.5)
 }
@@ -173,6 +202,7 @@ const bibleVerses = ref([
     reference: 'Matthew 11:28',
   },
 ])
+const shuffleVerse = computed(() => shuffleArray([...bibleVerses.value]))
 
 const affirmations = ref([
   {
@@ -191,81 +221,113 @@ const affirmations = ref([
     text: 'Embrace your flaws and let your beauty shine.',
     toggle: false,
   },
-  { text: 'The only way to do great work is to love what you do. – Steve Jobs', toggle: true },
   {
-    text: 'Success is not final, failure is not fatal: It is the courage to continue that counts. – Winston Churchill',
-    toggle: false,
-  },
-  { text: "Believe you can and you're halfway there. – Theodore Roosevelt", toggle: true },
-  {
-    text: 'The future belongs to those who believe in the beauty of their dreams. – Eleanor Roosevelt',
-    toggle: false,
-  },
-  {
-    text: 'You are never too old to set another goal or to dream a new dream. – C.S. Lewis',
+    text: 'The only way to do great work is to love what you do.',
+    reference: 'Steve Jobs',
     toggle: true,
   },
   {
-    text: 'It does not matter how slowly you go, as long as you do not stop. – Confucius',
-    toggle: false,
-  },
-  { text: 'Don’t watch the clock; do what it does. Keep going. – Sam Levenson', toggle: true },
-  {
-    text: 'The only limit to our realization of tomorrow is our doubts of today. – Franklin D. Roosevelt',
+    text: 'Success is not final, failure is not fatal: It is the courage to continue that counts.',
+    reference: 'Winston Churchill',
     toggle: false,
   },
   {
-    text: 'Do not wait to strike till the iron is hot, but make it hot by striking. – William Butler Yeats',
+    text: "Believe you can and you're halfway there.",
+    reference: 'Theodore Roosevelt',
     toggle: true,
   },
   {
-    text: 'Success is the sum of small efforts, repeated day in and day out. – Robert Collier',
+    text: 'The future belongs to those who believe in the beauty of their dreams.',
+    reference: 'Eleanor Roosevelt',
     toggle: false,
   },
   {
-    text: 'What is meant for you, will reach you even if it is beneath two mountains. And what is not meant for you will not reach you even if it’s between your two lips. – Imam Al-Ghazali',
+    text: 'You are never too old to set another goal or to dream a new dream.',
+    reference: 'C.S. Lewis',
     toggle: true,
   },
   {
-    text: 'People who love themselves come across as very loving, generous, and kind; they express their self-confidence through humility, forgiveness, and inclusiveness. – Sanaya Roman',
+    text: 'It does not matter how slowly you go, as long as you do not stop.',
+    reference: 'Confucius',
     toggle: false,
   },
   {
-    text: 'You are magnificent beyond measure, perfect in your imperfections, and wonderfully made. – Abiola Abrams',
+    text: 'Don’t watch the clock; do what it does. Keep going.',
+    reference: 'Sam Levenson',
     toggle: true,
   },
   {
-    text: 'Self-love has very little to do with how you feel about your outer self. It’s about accepting all of yourself. – Tyra Banks',
+    text: 'The only limit to our realization of tomorrow is our doubts of today.',
+    reference: 'Franklin D. Roosevelt',
     toggle: false,
   },
   {
-    text: 'The most powerful relationship you will ever have is the relationship with yourself. – Diane Von Furstenberg',
+    text: 'Do not wait to strike till the iron is hot, but make it hot by striking.',
+    reference: 'William Butler Yeats',
     toggle: true,
   },
   {
-    text: 'Caring for your body, mind, and spirit is your greatest and grandest responsibility. It’s about listening to the needs of your soul and then honoring them. – Kristi Ling',
+    text: 'Success is the sum of small efforts, repeated day in and day out.',
+    reference: 'Robert Collier',
     toggle: false,
   },
   {
-    text: 'Nourishing yourself in a way that helps you blossom in the direction you want to go is attainable, and you are worth the effort. – Deborah Day',
+    text: 'What is meant for you, will reach you even if it is beneath two mountains. And what is not meant for you will not reach you even if it’s between your two lips.',
+    reference: 'Imam Al-Ghazali',
     toggle: true,
   },
   {
-    text: 'When you recover or discover something that nourishes your soul and brings joy, care enough about yourself to make room for it in your life. – Jean Shinoda Bolen',
-    toggle: false,
-  },
-  { text: 'Be you, love you. All ways, always. – Alexandra Elle', toggle: true },
-  {
-    text: 'Do something nice for yourself today. Find some quiet, sit in stillness, breathe. Put your problems on pause. You deserve a break. – Akiroq Brost',
+    text: 'People who love themselves come across as very loving, generous, and kind; they express their self-confidence through humility, forgiveness, and inclusiveness.',
+    reference: 'Sanaya Roman',
     toggle: false,
   },
   {
-    text: 'Self-care is your fuel ... Whatever the road ahead or the path you’ve taken, self-care is what keeps your motor running and your wheels turning. – Melissa Steginus',
+    text: 'You are magnificent beyond measure, perfect in your imperfections, and wonderfully made.',
+    reference: 'Abiola Abrams',
     toggle: true,
   },
   {
-    text: 'As important as it is to have a plan for doing work, it is perhaps more important to have a plan for rest, relaxation, self-care, and sleep. – Akiroq Brost',
+    text: 'Self-love has very little to do with how you feel about your outer self. It’s about accepting all of yourself.',
+    reference: 'Tyra Banks',
+    toggle: false,
+  },
+  {
+    text: 'The most powerful relationship you will ever have is the relationship with yourself.',
+    reference: 'Diane Von Furstenberg',
+    toggle: true,
+  },
+  {
+    text: 'Caring for your body, mind, and spirit is your greatest and grandest responsibility. It’s about listening to the needs of your soul and then honoring them.',
+    reference: 'Kristi Ling',
+    toggle: false,
+  },
+  {
+    text: 'Nourishing yourself in a way that helps you blossom in the direction you want to go is attainable, and you are worth the effort.',
+    reference: 'Deborah Day',
+    toggle: true,
+  },
+  {
+    text: 'When you recover or discover something that nourishes your soul and brings joy, care enough about yourself to make room for it in your life.',
+    reference: 'Jean Shinoda Bolen',
+    toggle: false,
+  },
+  { text: 'Be you, love you. All ways, always.', reference: 'Alexandra Elle', toggle: true },
+  {
+    text: 'Do something nice for yourself today. Find some quiet, sit in stillness, breathe. Put your problems on pause. You deserve a break.',
+    reference: 'Akiroq Brost',
+    toggle: false,
+  },
+  {
+    text: 'Self-care is your fuel ... Whatever the road ahead or the path you’ve taken, self-care is what keeps your motor running and your wheels turning.',
+    reference: 'Melissa Steginus',
+    toggle: true,
+  },
+  {
+    text: 'As important as it is to have a plan for doing work, it is perhaps more important to have a plan for rest, relaxation, self-care, and sleep.',
+    reference: 'Akiroq Brost',
     toggle: false,
   },
 ])
+
+const shuffleAffirmation = computed(() => shuffleArray([...affirmations.value]))
 </script>
