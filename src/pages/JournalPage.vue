@@ -46,6 +46,7 @@
         <q-input v-model="journalForm.note" type="textarea" label="Note" outlined autogrow />
         <div class="row q-mt-md">
           <!--File Input-->
+
           <q-file
             accept="image/*"
             ref="fileImage"
@@ -65,7 +66,7 @@
             @update:model-value="fileSelected"
           />
           <!--File Button-->
-          <q-btn rounded unelevated dense @click="triggerFileInput('image')">
+          <q-btn rounded unelevated dense @click="openCam">
             <q-avatar :size="fileIconSize">
               <img src="/images/photo.png" />
             </q-avatar>
@@ -219,6 +220,9 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-card v-if="camDisplay" class="fullscreen bg-primary q-pa-none">
+      <OpenCam @captured-image="capturedImage" @cam-display="closeCam" />
+    </q-card>
 
     <q-page-sticky position="bottom-right" :offset="[18, 18]" v-if="showJournals">
       <q-btn fab icon="add" color="primary" @click="showForm('insert')" />
@@ -230,6 +234,7 @@
 import { ref, reactive, watch, onBeforeMount } from 'vue'
 import { useQuasar } from 'quasar'
 import { saveFile, getFiles } from 'src/boot/fileSystem/journal.js'
+import OpenCam from '../components/OpenCam.vue'
 
 const $q = useQuasar()
 const journalDatas = $q.localStorage.getItem('journals')
@@ -255,6 +260,15 @@ const fileAudio = ref(null)
 const fileVideo = ref(null)
 const compiledFiles = ref([])
 
+const camDisplay = ref(false)
+
+const openCam = () => {
+  camDisplay.value = true
+}
+const closeCam = (value) => {
+  camDisplay.value = value
+}
+
 const triggerFileInput = (input) => {
   if (input === 'image') fileImage.value.$el.click()
   if (input === 'audio') fileAudio.value.$el.click()
@@ -263,7 +277,13 @@ const triggerFileInput = (input) => {
 
 const fileSelected = (newFile) => {
   compiledFiles.value.push(newFile)
-  //console.log(compiledFiles.value[0].name)
+  //console.log(compiledFiles.value)
+}
+
+const capturedImage = (imageCaptured) => {
+  closeCam(false)
+  compiledFiles.value.push(imageCaptured)
+  //console.log(imageCaptured)
 }
 
 const deleteCurrentFile = (index, pointer) => {
@@ -321,7 +341,7 @@ const saveJournal = async () => {
       }
     }
     finalFile = [...fileUpload]
-    console.log(journalFiles)
+    //console.log(journalFiles)
     if (crudData.value !== 'insert' && journalFiles.value.length > 0) {
       let JournalS = journalFiles.value.map((value) => {
         return value.returnData
