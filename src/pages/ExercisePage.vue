@@ -1,7 +1,9 @@
 <template>
   <q-page class="relative-position">
     <q-img src="/videos/breathing-exercises-bg.gif" class="fit absolute"></q-img>
+
     <div class="absolute-full column items-center justify-center q-pa-md">
+      <div class="text-h3 text-weight-bold text-white">{{ audioName }}</div>
       <q-img src="/images/bubble.png" spinner-color="primary" width="300px" height="auto">
         <div class="fixed-center text-h3 text-center bg-transparent text-white">
           <div v-if="timeLeft !== 0">

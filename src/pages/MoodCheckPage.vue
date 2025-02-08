@@ -27,7 +27,7 @@
 
     <q-card flat outlined v-show="showEmotion" class="q-mt-md bg-transparent">
       <q-card-actions
-        :class="`text-${emotions[currentEmotion].color} ${emotions[currentEmotion].color}-transparent`"
+        :class="`text-${emotions[currentEmotion].color} transparent-card-40`"
         align="center"
       >
         <q-btn
@@ -89,7 +89,7 @@
     </q-card>
     <q-card flat outlined v-show="showActivity" class="q-mt-md bg-transparent">
       <q-card-actions
-        :class="`text-${activities[currentActivity].color} ${activities[currentActivity].color}-transparent`"
+        :class="`text-${activities[currentActivity].color} transparent-card-40`"
         align="center"
       >
         <q-btn

@@ -47,44 +47,47 @@
         <div class="row q-mt-md">
           <!--File Input-->
 
-          <q-file
-            accept="image/*"
-            ref="fileImage"
-            style="display: none"
-            @update:model-value="fileSelected"
-          />
-          <q-file
-            accept="audio/*"
-            ref="fileAudio"
-            style="display: none"
-            @update:model-value="fileSelected"
-          />
-          <q-file
-            accept="video/*"
-            ref="fileVideo"
-            style="display: none"
-            @update:model-value="fileSelected"
-          />
           <!--File Button-->
-          <q-btn rounded unelevated dense @click="openCam">
+          <q-btn rounded unelevated dense @click="openCam('photo')">
             <q-avatar :size="fileIconSize">
               <img src="/images/photo.png" />
             </q-avatar>
           </q-btn>
-          <q-btn rounded unelevated dense @click="triggerFileInput('audio')" class="q-mx-md">
+          <q-btn rounded unelevated dense @click="recorderDisplay = true" class="q-mx-md">
             <q-avatar :size="fileIconSize">
               <img src="/images/mic.png" />
             </q-avatar>
           </q-btn>
-          <q-btn rounded unelevated dense @click="triggerFileInput('video')">
+          <q-btn rounded unelevated dense @click="openCam('video')">
             <q-avatar :size="fileIconSize">
               <img src="/images/video.png" />
             </q-avatar>
           </q-btn>
         </div>
         <q-list separator bordered>
-          <q-item class="q-my-sm" v-for="(file, index) in compiledFiles" :key="index">
-            <q-item-section>{{ file.name }}</q-item-section>
+          <q-item class="q-my-xs" v-for="(file, index) in previewFiles" :key="index">
+            <q-item-section>
+              <q-img
+                v-if="file.type == 'image'"
+                :src="file.url"
+                fit="scale-down"
+                loading="lazy"
+                spinner-color="white"
+                :ratio="1"
+              />
+              <q-video
+                v-else-if="file.type == 'video'"
+                loading="lazy"
+                :src="file.url"
+                :ratio="16 / 9"
+              />
+              <div v-else-if="file.type == 'audio'">
+                <audio controls>
+                  <source :src="file.url" type="audio/mp3" />
+                  Your device does not support the audio tag.
+                </audio>
+              </div>
+            </q-item-section>
             <q-item-section avatar>
               <q-btn
                 flat
@@ -95,8 +98,29 @@
             </q-item-section>
           </q-item>
           <div v-if="crudData !== 'insert'">
-            <q-item class="q-my-sm" v-for="(file, index) in journalFiles" :key="index">
-              <q-item-section>{{ file.name }}</q-item-section>
+            <q-item class="q-my-xs" v-for="(file, index) in journalFiles.value" :key="index">
+              <q-item-section>
+                <q-img
+                  v-if="file.type == 'image'"
+                  :src="file.url"
+                  fit="scale-down"
+                  loading="lazy"
+                  spinner-color="white"
+                  :ratio="1"
+                />
+                <q-video
+                  v-else-if="file.type == 'video'"
+                  loading="lazy"
+                  :src="file.url"
+                  :ratio="16 / 9"
+                />
+                <div v-else-if="file.type == 'audio'">
+                  <audio controls>
+                    <source :src="file.url" type="audio/mp3" />
+                    Your device does not support the audio tag.
+                  </audio>
+                </div>
+              </q-item-section>
               <q-item-section avatar>
                 <q-btn
                   flat
@@ -179,7 +203,7 @@
         <q-card-section class="col q-pt-none">
           <q-list>
             <q-item v-for="(item, index) in journals[currentEditIndex].gratefulItems" :key="index">
-              <q-item-section>
+              <q-item-section class="text-subtitle3">
                 {{ item }}
               </q-item-section>
             </q-item>
@@ -209,7 +233,6 @@
                     Your device does not support the audio tag.
                   </audio>
                 </div>
-                {{ item.name }}
               </q-item-section>
             </q-item>
           </q-list>
@@ -221,7 +244,18 @@
       </q-card>
     </q-dialog>
     <q-card v-if="camDisplay" class="fullscreen bg-primary q-pa-none">
-      <OpenCam @captured-image="capturedImage" @cam-display="closeCam" />
+      <OpenCam
+        @captured-image="capturedImage"
+        @captured-video="capturedVideo"
+        @cam-display="closeCam"
+        :cam-category="camCategory"
+      />
+    </q-card>
+    <q-card
+      v-if="recorderDisplay"
+      class="fullscreen bg-primary q-pa-none column items-center justify-center"
+    >
+      <OpenRecorder @recorder-display="closeRecorder" @recorded-audio="recordedAudio" />
     </q-card>
 
     <q-page-sticky position="bottom-right" :offset="[18, 18]" v-if="showJournals">
@@ -234,7 +268,8 @@
 import { ref, reactive, watch, onBeforeMount } from 'vue'
 import { useQuasar } from 'quasar'
 import { saveFile, getFiles } from 'src/boot/fileSystem/journal.js'
-import OpenCam from '../components/OpenCam.vue'
+import OpenCam from 'src/components/OpenCam.vue'
+import OpenRecorder from 'src/components/OpenRecorder.vue'
 
 const $q = useQuasar()
 const journalDatas = $q.localStorage.getItem('journals')
@@ -259,53 +294,98 @@ const fileImage = ref(null)
 const fileAudio = ref(null)
 const fileVideo = ref(null)
 const compiledFiles = ref([])
+const previewFiles = reactive([])
 
 const camDisplay = ref(false)
+const recorderDisplay = ref(false)
+const camCategory = ref('photo')
 
-const openCam = () => {
+const openCam = (category) => {
   camDisplay.value = true
+  camCategory.value = category
 }
 const closeCam = (value) => {
   camDisplay.value = value
 }
 
-const triggerFileInput = (input) => {
-  if (input === 'image') fileImage.value.$el.click()
-  if (input === 'audio') fileAudio.value.$el.click()
-  if (input === 'video') fileVideo.value.$el.click()
+const closeRecorder = (value) => {
+  recorderDisplay.value = value
 }
 
-const fileSelected = (newFile) => {
-  compiledFiles.value.push(newFile)
-  //console.log(compiledFiles.value)
-}
+// const triggerFileInput = (input) => {
+//   if (input === 'image') fileImage.value.$el.click()
+//   if (input === 'audio') fileAudio.value.$el.click()
+//   if (input === 'video') fileVideo.value.$el.click()
+// }
 
-const capturedImage = (imageCaptured) => {
+// const fileSelected = (newFile) => {
+//   compiledFiles.value.push(newFile)
+//   //console.log(compiledFiles.value)
+// }
+
+const capturedImage = async (imageCaptured) => {
   closeCam(false)
   compiledFiles.value.push(imageCaptured)
+  const file = await readFile(imageCaptured)
+  previewFiles.push({ url: file, type: 'image' })
+  console.log(compiledFiles.value)
+  console.log(previewFiles)
+  // displayFiles()
+  // displayFiles()
+}
+
+const readFile = async (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = (e) => resolve(e.target.result)
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
+const capturedVideo = async (videoCaptured) => {
+  closeCam(false)
+  compiledFiles.value.push(videoCaptured)
+  const file = await readFile(videoCaptured)
+  previewFiles.push({ url: file, type: 'video' })
+  console.log(compiledFiles.value)
+  console.log(previewFiles)
   //console.log(imageCaptured)
+}
+
+const recordedAudio = async (audio) => {
+  closeRecorder(false)
+  compiledFiles.value.push(audio)
+  const file = await readFile(audio)
+  previewFiles.push({ url: file, type: 'audio' })
+  console.log(compiledFiles.value)
+  console.log(previewFiles)
 }
 
 const deleteCurrentFile = (index, pointer) => {
   if (pointer === 'compiled') {
     compiledFiles.value.splice(index, 1)
+    previewFiles.splice(index, 1)
   } else if (pointer === 'journal') {
     //console.log(journalFiles)
     journalFiles.splice(index, 1)
     journalFiles.value.splice(index, 1)
   }
+  console.log(compiledFiles.value)
+  console.log(previewFiles)
 }
 
 const noteDisplay = async (index) => {
   displayNote.value = true
   currentEditIndex.value = index
+  journalFiles.splice(0)
   Object.assign(journalFiles, journals[currentEditIndex.value].fileUploads)
   journalFiles.value = await Promise.all(
     journalFiles.map(async (value) => {
       return await getFiles(value)
     }),
   )
-  //console.log(journalFiles.value)
+  console.log(journalFiles.value)
 }
 
 const insertJournal = (journalEntry) => {
@@ -385,6 +465,7 @@ const clearForm = () => {
   fileAudio.value = null
   fileVideo.value = null
   compiledFiles.value = []
+  previewFiles.splice(0)
   showJournals.value = true
 }
 
@@ -396,6 +477,31 @@ const formattedDate = (date) => {
 
 if (journalDatas) Object.assign(journals, journalDatas)
 const showJournals = ref(true)
+
+// const displayFiles = async () => {
+//   let updatedFiles = compiledFiles.value
+
+//   await Promise.all(
+//     updatedFiles.map(async (value) => {
+//       value.url = await readFile(value)
+//     }),
+//   )
+//   console.log(updatedFiles)
+
+//   compiledFiles.value = updatedFiles
+// }
+// watchEffect(async () => {
+//   //let updatedFiles = compiledFiles.value
+//   await Promise.all(
+//     compiledFiles.value.map(async (value) => {
+//       value.url = await readFile(value)
+//     }),
+//   )
+//   console.log(compiledFiles.value)
+
+//   //compiledFiles.value = updatedFiles
+// })
+
 watch(journals, (value) => {
   $q.localStorage.set('journals', value)
 })
@@ -409,3 +515,9 @@ onBeforeMount(() => {
   })
 })
 </script>
+
+<style scoped>
+audio {
+  width: 15rem;
+}
+</style>

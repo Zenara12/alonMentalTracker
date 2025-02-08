@@ -1,23 +1,23 @@
 <template>
   <div v-if="!capturedPhotoUrl && !recordedVideoUrl">
     <q-card-section>
-      <video ref="videoRef" class="video-preview" autoplay playsinline></video>
+      <video
+        ref="videoRef"
+        class="video-preview"
+        :class="{ mirror: currentFacingMode === 'user' }"
+        autoplay
+        playsinline
+      ></video>
       <canvas ref="canvasRef" class="hidden-canvas"></canvas>
     </q-card-section>
 
     <q-card-actions align="evenly" class="q-pa-md">
-      <q-btn icon="close" @click="emit('camDisplay', false)" color="red" />
+      <q-btn icon="close" @click="closeCamera" color="red" />
 
-      <q-btn v-if="isStreamActive" @click="capturePhoto" color="green" icon="camera" />
-      <q-btn
-        v-if="false"
-        @click="startRecording"
-        color="blue"
-        icon="videocam"
-        label="Record Video"
-      />
+      <q-btn v-if="isPhoto" @click="capturePhoto" color="green" icon="camera" />
+      <q-btn v-if="isVideo" @click="startRecording" color="blue" icon="videocam" />
       <q-btn v-if="isRecording" @click="stopRecording" color="red" icon="stop_circle" />
-      <q-btn v-if="isStreamActive" @click="switchCamera" color="secondary" icon="flip_camera_ios" />
+      <q-btn v-if="isStreamActive" @click="switchCamera" color="warning" icon="flip_camera_ios" />
     </q-card-actions>
   </div>
 
@@ -30,10 +30,15 @@
       <q-btn @click="uploadPhoto" color="teal" icon="upload" label="Upload Photo" />
     </q-card-actions>
   </div>
-  <q-card-section v-if="recordedVideoUrl">
-    <video :src="recordedVideoUrl" class="captured-video" controls></video>
-    <q-btn @click="downloadVideo" color="teal" icon="download" label="Download Video" />
-  </q-card-section>
+  <div v-if="recordedVideoUrl">
+    <q-card-section>
+      <video :src="recordedVideoUrl" class="captured-video" controls></video>
+    </q-card-section>
+    <q-card-actions align="evenly" class="q-pa-md">
+      <q-btn icon="arrow_back_ios" @click="captureBack" color="orange" />
+      <q-btn @click="downloadVideo" color="teal" icon="download" label="Upload Video" />
+    </q-card-actions>
+  </div>
 </template>
 
 <script setup>
@@ -44,6 +49,8 @@ const videoRef = ref(null)
 const canvasRef = ref(null)
 const stream = ref(null)
 const isStreamActive = ref(false)
+const isPhoto = ref(false)
+const isVideo = ref(false)
 const isRecording = ref(false)
 const currentFacingMode = ref('environment')
 
@@ -56,17 +63,24 @@ const recordedVideoFile = ref(null)
 let mediaRecorder = null
 let recordedChunks = []
 
-const emit = defineEmits(['capturedImage', 'camDisplay'])
+const emit = defineEmits(['capturedImage', 'camDisplay', 'capturedVideo'])
+const { camCategory } = defineProps(['camCategory'])
+
+const closeCamera = () => {
+  stopCamera()
+  emit('camDisplay', false)
+}
 
 // Camera constraints (Includes Audio)
 const getConstraints = (facingMode = 'environment') => ({
   video: { facingMode },
-  audio: true,
+  audio: camCategory === 'video' ? true : false,
 })
 
 //captureback
 const captureBack = async () => {
   capturedPhotoUrl.value = null
+  recordedVideoUrl.value = null
   await startCamera()
 }
 
@@ -79,6 +93,8 @@ const startCamera = async () => {
     if (videoRef.value) {
       videoRef.value.srcObject = stream.value
       isStreamActive.value = true
+      if (camCategory === 'photo') isPhoto.value = true
+      else if (camCategory === 'video') isVideo.value = true
     }
   } catch (error) {
     console.error('Camera error:', error)
@@ -91,6 +107,13 @@ const stopCamera = () => {
     stream.value.getTracks().forEach((track) => track.stop())
     stream.value = null
     isStreamActive.value = false
+
+    if (camCategory === 'photo') {
+      isPhoto.value = false
+    } else if (camCategory === 'video') {
+      isVideo.value = false
+    }
+
     if (videoRef.value) {
       videoRef.value.srcObject = null
     }
@@ -125,7 +148,7 @@ const capturePhoto = () => {
       })
       capturedPhotoUrl.value = URL.createObjectURL(capturedPhotoFile.value)
 
-      //console.log(capturedPhotoFile.value)
+      //console.log(capturedPhotoUrl.value)
     }
   }, 'image/png')
   stopCamera()
@@ -151,14 +174,19 @@ const startRecording = () => {
     }
   }
 
+  const date = new Date()
+
   mediaRecorder.onstop = () => {
     const blob = new Blob(recordedChunks, { type: 'video/webm' })
-    recordedVideoFile.value = new File([blob], 'recorded_video.webm', { type: 'video/webm' })
+    recordedVideoFile.value = new File([blob], `video_${date.getTime()}.webm`, {
+      type: 'video/webm',
+    })
     recordedVideoUrl.value = URL.createObjectURL(recordedVideoFile.value)
   }
 
   mediaRecorder.start()
   isRecording.value = true
+  isVideo.value = false
 }
 
 // Stop Video Recording
@@ -173,10 +201,7 @@ const stopRecording = () => {
 const downloadVideo = () => {
   if (!recordedVideoFile.value) return
 
-  const a = document.createElement('a')
-  a.href = URL.createObjectURL(recordedVideoFile.value)
-  a.download = recordedVideoFile.value.name
-  a.click()
+  emit('capturedVideo', recordedVideoFile.value)
 }
 
 onMounted(() => {
@@ -215,5 +240,9 @@ onUnmounted(() => {
   height: 82dvh;
   object-fit: cover;
   border-radius: 8px;
+}
+
+.mirror {
+  transform: scaleX(-1);
 }
 </style>
