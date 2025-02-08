@@ -328,8 +328,8 @@ const capturedImage = async (imageCaptured) => {
   compiledFiles.value.push(imageCaptured)
   const file = await readFile(imageCaptured)
   previewFiles.push({ url: file, type: 'image' })
-  console.log(compiledFiles.value)
-  console.log(previewFiles)
+  //console.log(compiledFiles.value)
+  //console.log(previewFiles)
   // displayFiles()
   // displayFiles()
 }
@@ -348,8 +348,8 @@ const capturedVideo = async (videoCaptured) => {
   compiledFiles.value.push(videoCaptured)
   const file = await readFile(videoCaptured)
   previewFiles.push({ url: file, type: 'video' })
-  console.log(compiledFiles.value)
-  console.log(previewFiles)
+  //console.log(compiledFiles.value)
+  //console.log(previewFiles)
   //console.log(imageCaptured)
 }
 
@@ -358,8 +358,8 @@ const recordedAudio = async (audio) => {
   compiledFiles.value.push(audio)
   const file = await readFile(audio)
   previewFiles.push({ url: file, type: 'audio' })
-  console.log(compiledFiles.value)
-  console.log(previewFiles)
+  //console.log(compiledFiles.value)
+  //console.log(previewFiles)
 }
 
 const deleteCurrentFile = (index, pointer) => {
@@ -371,8 +371,8 @@ const deleteCurrentFile = (index, pointer) => {
     journalFiles.splice(index, 1)
     journalFiles.value.splice(index, 1)
   }
-  console.log(compiledFiles.value)
-  console.log(previewFiles)
+  // console.log(compiledFiles.value)
+  //console.log(previewFiles)
 }
 
 const noteDisplay = async (index) => {
@@ -385,7 +385,7 @@ const noteDisplay = async (index) => {
       return await getFiles(value)
     }),
   )
-  console.log(journalFiles.value)
+  //console.log(journalFiles.value)
 }
 
 const insertJournal = (journalEntry) => {

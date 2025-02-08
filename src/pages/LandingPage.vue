@@ -3,6 +3,21 @@
     <q-img :src="bgImage" class="fit absolute"></q-img>
     <!-- Scattered buttons -->
     <div class="full-height full-width">
+      <div round class="absolute-position bubble-btn" style="top: 5%; right: 5%">
+        <q-img src="/images/nemo.png" style="cursor: pointer"> </q-img>
+      </div>
+      <div round class="absolute-position bubble-btn" style="top: 5%; left: 5%">
+        <q-img src="/images/jellyfish.png" style="cursor: pointer"> </q-img>
+      </div>
+      <div round class="absolute-position bubble-btn" style="bottom: 1%; left: 1%">
+        <q-img src="/images/snail.png" style="cursor: pointer"> </q-img>
+      </div>
+      <div round class="absolute-position bubble-btn" style="bottom: 20%; right: 1%">
+        <q-img src="/images/starfish.png" style="cursor: pointer"> </q-img>
+      </div>
+      <div round class="absolute-position bubble-btn2" style="bottom: 40%; left: 1%">
+        <q-img src="/images/blue-star.png" style="cursor: pointer"> </q-img>
+      </div>
       <!-- Top section - Inhale, Exhale -->
       <div v-ripple round class="absolute-position bubble-btn" style="top: 15%; right: 20%">
         <q-img :src="bubbleUrl" style="cursor: pointer" @click="navigateTo('/breathing')">
@@ -64,6 +79,12 @@ const navigateTo = (route = 'breathing') => {
 .bubble-btn {
   width: 8rem;
   height: 8rem;
+  border-radius: 50%;
+  font-size: 1.2rem;
+}
+.bubble-btn2 {
+  width: 10rem;
+  height: 10rem;
   border-radius: 50%;
   font-size: 1.2rem;
 }

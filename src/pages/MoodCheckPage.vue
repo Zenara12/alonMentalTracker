@@ -25,22 +25,13 @@
       </div>
     </q-card>
 
-    <q-card flat outlined v-show="showEmotion" class="q-mt-md bg-transparent">
-      <q-card-actions
-        :class="`text-${emotions[currentEmotion].color} transparent-card-40`"
-        align="center"
-      >
-        <q-btn
-          class=""
-          @click="emotionReset"
-          icon="sync"
-          push
-          :color="emotions[currentEmotion].color"
-        ></q-btn>
+    <q-card flat outlined v-show="showEmotion" class="q-mt-md transparent-card-40">
+      <q-card-actions class="text-primary`" align="center">
+        <q-btn @click="emotionReset" icon="sync" push color="primary"></q-btn>
         <q-space />
         <div class="column items-center justify-center content-center">
-          <div class="text-h6">{{ emotions[currentEmotion].range }}/100</div>
-          <div class="text-weight-bolder text-h6">{{ emotions[currentEmotion].name }} Button</div>
+          <div class="text-weight-bold text-h6">{{ emotions[currentEmotion].range }}/100</div>
+          <div class="text-weight-bolder text-h5">{{ emotions[currentEmotion].name }} Button</div>
         </div>
         <q-space />
         <q-btn
@@ -49,7 +40,7 @@
           icon="remove"
           v-touch-repeat:600:300:50.mouse="emotionsMinusRange"
           push
-          :color="emotions[currentEmotion].color"
+          color="primary"
         >
         </q-btn>
         <q-btn
@@ -58,7 +49,7 @@
           v-touch-repeat:600:300:50.mouse="emotionsAddRange"
           icon="add"
           push
-          :color="emotions[currentEmotion].color"
+          color="primary"
         >
         </q-btn>
       </q-card-actions>
@@ -87,18 +78,9 @@
         </div>
       </div>
     </q-card>
-    <q-card flat outlined v-show="showActivity" class="q-mt-md bg-transparent">
-      <q-card-actions
-        :class="`text-${activities[currentActivity].color} transparent-card-40`"
-        align="center"
-      >
-        <q-btn
-          class=""
-          @click="activityReset"
-          icon="sync"
-          push
-          :color="activities[currentActivity].color"
-        ></q-btn>
+    <q-card flat outlined v-show="showActivity" class="q-mt-md transparent-card-40">
+      <q-card-actions align="center">
+        <q-btn class="" @click="activityReset" icon="sync" push color="primary"></q-btn>
         <q-space />
         <div class="column items-center justify-center content-center">
           <div class="text-h6">{{ activities[currentActivity].range }}/100</div>
@@ -113,7 +95,7 @@
           icon="remove"
           v-touch-repeat:600:300:50.mouse="activityMinusRange"
           push
-          :color="activities[currentActivity].color"
+          color="primary"
         >
         </q-btn>
         <q-btn
@@ -122,7 +104,7 @@
           v-touch-repeat:600:300:50.mouse="activityAddRange"
           icon="add"
           push
-          :color="activities[currentActivity].color"
+          color="primary"
         >
         </q-btn>
       </q-card-actions>
@@ -131,9 +113,11 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onBeforeUnmount } from 'vue'
+import { useQuasar } from 'quasar'
 
 const buttonAvatarSize = '50px'
+const $q = useQuasar()
 
 //Emotion scripts
 const showEmotion = ref(false)
@@ -178,6 +162,19 @@ const activityReset = () => {
   activities[currentActivity.value].range = 0
 }
 
+//initialize
+const listEmotions = $q.localStorage.getItem('emotions')
+const listActivities = $q.localStorage.getItem('activities')
+// const initialEmotions = [
+//   { name: 'Cheerful', icon: 'cheerful.png', color: 'warning', range: 0 },
+//   { name: 'Neutral', icon: 'nuetral.png', color: 'grey', range: 0 },
+//   { name: 'Sad', icon: 'sad.png', color: 'blue-grey', range: 0 },
+//   { name: 'Angry', icon: 'angry.png', color: 'red', range: 0 },
+//   { name: 'Sick', icon: 'sick.png', color: 'purple', range: 0 },
+//   { name: 'Anxious', icon: 'anxious.png', color: 'orange', range: 0 },
+//   { name: 'Jealous', icon: 'jealous.png', color: 'green', range: 0 },
+// ]
+
 const emotions = reactive([
   { name: 'Cheerful', icon: 'cheerful.png', color: 'warning', range: 0 },
   { name: 'Neutral', icon: 'nuetral.png', color: 'grey', range: 0 },
@@ -187,6 +184,7 @@ const emotions = reactive([
   { name: 'Anxious', icon: 'anxious.png', color: 'orange', range: 0 },
   { name: 'Jealous', icon: 'jealous.png', color: 'green', range: 0 },
 ])
+
 const activities = reactive([
   { name: 'Run', icon: 'running.png', color: 'warning', range: 0 },
   { name: 'Read', icon: 'book.png', color: 'grey', range: 0 },
@@ -196,6 +194,14 @@ const activities = reactive([
   { name: 'Sports', icon: 'sports.png', color: 'orange', range: 0 },
   { name: 'Sleep', icon: 'sleep.png', color: 'green', range: 0 },
 ])
+
+if (listEmotions) Object.assign(emotions, listEmotions)
+if (listActivities) Object.assign(activities, listActivities)
+
+onBeforeUnmount(() => {
+  $q.localStorage.setItem('emotions', emotions)
+  $q.localStorage.setItem('activities', activities)
+})
 </script>
 
 <style scoped>
