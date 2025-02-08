@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-import { ref, onUnmounted, onMounted, defineEmits } from 'vue'
+import { ref, onUnmounted, onMounted, onBeforeUnmount } from 'vue'
 
 // Refs
 const videoRef = ref(null)
@@ -62,6 +62,7 @@ const recordedVideoFile = ref(null)
 
 let mediaRecorder = null
 let recordedChunks = []
+let mirroredStream = null
 
 const emit = defineEmits(['capturedImage', 'camDisplay', 'capturedVideo'])
 const { camCategory } = defineProps(['camCategory'])
@@ -137,6 +138,11 @@ const capturePhoto = () => {
   canvas.width = videoRef.value.videoWidth
   canvas.height = videoRef.value.videoHeight
   const ctx = canvas.getContext('2d')
+  if (currentFacingMode.value === 'user') {
+    // **Flip image horizontally for front camera**
+    ctx.translate(canvas.width, 0)
+    ctx.scale(-1, 1)
+  }
   ctx.drawImage(videoRef.value, 0, 0, canvas.width, canvas.height)
 
   const date = new Date()
@@ -161,12 +167,50 @@ const uploadPhoto = () => {
   emit('capturedImage', capturedPhotoFile.value)
 }
 
+//mirror
+const createMirroredStream = async (originalStream) => {
+  const canvas = document.createElement('canvas')
+  const video = document.createElement('video')
+  const ctx = canvas.getContext('2d')
+
+  video.srcObject = originalStream
+  await new Promise((resolve) => (video.onloadedmetadata = resolve))
+  video.play()
+
+  canvas.width = video.videoWidth
+  canvas.height = video.videoHeight
+
+  const stream = canvas.captureStream()
+  const videoTrack = stream.getVideoTracks()[0]
+
+  const frameRate = videoTrack.getSettings().frameRate
+
+  setInterval(() => {
+    ctx.save()
+    ctx.scale(-1, 1)
+    ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height)
+    ctx.restore()
+  }, 1000 / frameRate)
+
+  const audioTracks = originalStream.getAudioTracks()
+  if (audioTracks.length > 0) {
+    stream.addTrack(audioTracks[0])
+  }
+
+  return stream
+}
+
 // Start Video Recording
-const startRecording = () => {
+const startRecording = async () => {
   if (!stream.value) return
 
   recordedChunks = []
-  mediaRecorder = new MediaRecorder(stream.value, { mimeType: 'video/webm; codecs=vp9,opus' })
+  if (currentFacingMode.value === 'user') {
+    mirroredStream = await createMirroredStream(stream.value)
+    mediaRecorder = new MediaRecorder(mirroredStream, { mimeType: 'video/webm; codecs=vp9,opus' })
+  } else {
+    mediaRecorder = new MediaRecorder(stream.value, { mimeType: 'video/webm; codecs=vp9,opus' })
+  }
 
   mediaRecorder.ondataavailable = (event) => {
     if (event.data.size > 0) {
@@ -210,6 +254,9 @@ onMounted(() => {
 
 // Cleanup on component unmount
 onUnmounted(() => {
+  stopCamera()
+})
+onBeforeUnmount(() => {
   stopCamera()
 })
 </script>

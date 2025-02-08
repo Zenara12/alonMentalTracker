@@ -478,30 +478,6 @@ const formattedDate = (date) => {
 if (journalDatas) Object.assign(journals, journalDatas)
 const showJournals = ref(true)
 
-// const displayFiles = async () => {
-//   let updatedFiles = compiledFiles.value
-
-//   await Promise.all(
-//     updatedFiles.map(async (value) => {
-//       value.url = await readFile(value)
-//     }),
-//   )
-//   console.log(updatedFiles)
-
-//   compiledFiles.value = updatedFiles
-// }
-// watchEffect(async () => {
-//   //let updatedFiles = compiledFiles.value
-//   await Promise.all(
-//     compiledFiles.value.map(async (value) => {
-//       value.url = await readFile(value)
-//     }),
-//   )
-//   console.log(compiledFiles.value)
-
-//   //compiledFiles.value = updatedFiles
-// })
-
 watch(journals, (value) => {
   $q.localStorage.set('journals', value)
 })
