@@ -102,19 +102,11 @@
               flat
               size="lg"
               :color="activities[n - 1].color"
-              v-if="activities[n - 1].icon.split('.')[1] == 'png'"
             >
               <q-avatar :size="buttonAvatarSize">
                 <img :src="`/images/${activities[n - 1].icon}`" />
               </q-avatar>
             </q-btn>
-            <q-btn
-              v-else
-              @click="changeActivity(n - 1)"
-              round
-              :color="activities[n - 1].color"
-              :icon="activities[n - 1].icon"
-            />
           </div>
           <div class="q-mb-sm">
             <q-btn round flat size="lg" color="primary" @click="extraActivities = true">
@@ -163,23 +155,11 @@
 
           <q-card-section>
             <div v-for="(n, index) in 5" :key="index" class="col-3 text-center">
-              <q-btn
-                @click="sortActivities(n + 6)"
-                round
-                size="md"
-                v-if="activities[n + 6].icon.split('.')[1] == 'png'"
-              >
+              <q-btn @click="sortActivities(n + 6)" round size="md">
                 <q-avatar :size="buttonAvatarSize">
                   <img :src="`/images/${activities[n + 6].icon}`" />
                 </q-avatar>
               </q-btn>
-              <q-btn
-                v-else
-                @click="sortActivities(n + 6)"
-                round
-                :color="activities[n + 6].color"
-                :icon="activities[n + 6].icon"
-              />
               <div class="q-mt-sm text-weight-bolder text-subtitle1">
                 {{ activities[n + 6].name }}
               </div>
@@ -259,7 +239,7 @@ const extraActivities = ref(false)
 const changeActivity = (value) => {
   currentActivity.value = value
   showActivity.value = true
-  waveColor.value = activities[currentActivity.value].color
+  waveColor.value = 'blue'
   waveCount(activities[currentActivity.value].range)
 }
 
@@ -299,6 +279,7 @@ const sortActivities = (index) => {
 const listEmotions = $q.localStorage.getItem('emotions')
 const listActivities = $q.localStorage.getItem('activities')
 const firstLastEmotions = $q.localStorage.getItem('initialEmo')
+const firstLastActivities = $q.localStorage.getItem('initialAct')
 
 const emotions = reactive([
   { name: 'Cheerful', icon: 'cheerful.png', color: 'green', range: 0 },
@@ -323,11 +304,11 @@ const activities = reactive([
   { name: 'Bike', icon: 'bicycle.png', color: 'purple', range: 0 },
   { name: 'Sports', icon: 'sports.png', color: 'orange', range: 0 },
   { name: 'Sleep', icon: 'sleep.png', color: 'green', range: 0 },
-  { name: 'Hiking', icon: 'hiking', color: 'warning', range: 0 },
-  { name: 'Camping', icon: 'hiking', color: 'grey', range: 0 },
-  { name: 'Shopping', icon: 'shopping_cart', color: 'purple', range: 0 },
-  { name: 'Eating', icon: 'restaurant', color: 'orange', range: 0 },
-  { name: 'Gaming', icon: 'sports_esports', color: 'green', range: 0 },
+  { name: 'Hiking', icon: 'hiking.png', color: 'warning', range: 0 },
+  { name: 'Camping', icon: 'camping.png', color: 'grey', range: 0 },
+  { name: 'Shopping', icon: 'shopping.png', color: 'purple', range: 0 },
+  { name: 'Eating', icon: 'food.png', color: 'orange', range: 0 },
+  { name: 'Gaming', icon: 'gaming.png', color: 'green', range: 0 },
 ])
 
 if (firstLastEmotions) {
@@ -336,7 +317,11 @@ if (firstLastEmotions) {
   $q.localStorage.setItem('initialEmo', true)
 }
 
-if (listActivities) Object.assign(activities, listActivities)
+if (firstLastActivities) {
+  if (listActivities) Object.assign(activities, listActivities)
+} else {
+  $q.localStorage.setItem('initialAct', true)
+}
 
 onBeforeUnmount(() => {
   $q.localStorage.setItem('emotions', emotions)
