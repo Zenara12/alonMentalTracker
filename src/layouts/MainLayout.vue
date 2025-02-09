@@ -5,6 +5,7 @@
       <q-toolbar>
         <q-toolbar-title @click="home">
           <q-img
+            v-if="!launch"
             src="/images/alon-logo128x128.png"
             loading="lazy"
             spinner-color="white"
@@ -78,6 +79,8 @@ import { ref, watch, onMounted } from 'vue'
 import { useBackButton } from 'src/backButtonHandler'
 import { useQuasar } from 'quasar'
 import SettingsComponent from 'src/components/SettingsComponent.vue'
+//import localNotif from 'src/boot/localNotif.js'
+import { LocalNotifications } from '@capacitor/local-notifications'
 
 const $q = useQuasar()
 
@@ -89,9 +92,10 @@ const audioBg = new Audio('/audios/alon-bg-music.mp3')
 audioBg.loop = true
 const userInteracted = ref(false)
 
-const audioToggle = ref($q.localStorage.getItem('sound') || false)
+const audioToggle = ref($q.localStorage.getItem('sound') || true)
 
 const settingsDisplay = ref(false)
+const launch = ref(true)
 
 const playAudio = () => {
   if (userInteracted.value && audioBg.paused) {
@@ -118,7 +122,7 @@ const selectedSize = ref({
 
 const savedFont = ref($q.localStorage.getItem('selectedFont') || false)
 const savedSize = ref($q.localStorage.getItem('selectedSize') || false)
-const darkMode = ref($q.localStorage.getItem('darkMode') || false)
+const darkMode = ref($q.dark.isActive)
 
 const updateFontFamily = (font) => {
   document.body.style.fontFamily = font
@@ -144,7 +148,111 @@ const toggleDarkMode = () => {
   $q.localStorage.setItem('darkMode', darkMode.value) // Save preference
 }
 
+const sendNotification = async () => {
+  let notifToggle = $q.localStorage.getItem('notification') || true
+
+  if (notifToggle) {
+    try {
+      // Request permissions first
+      const permStatus = await LocalNotifications.requestPermissions()
+      if (permStatus.display === 'granted') {
+        const d = new Date()
+        // Define fixed integer IDs for notifications
+        const notificationIds = {
+          first: parseInt(d.getTime() % 100000000),
+          second: parseInt((d.getTime() % 100000000) + 1),
+
+          morning: parseInt((d.getTime() % 100000000) + 2),
+          afternoon: parseInt((d.getTime() % 100000000) + 3),
+        }
+        const firstNotificationTime = new Date(d.getTime() + 5000) // 1 minute from now
+        const secondNotificationTime = new Date(d.getTime() + 10000)
+
+        const calculateNextTime = (hours, minutes = 0) => {
+          const targetTime = new Date()
+          targetTime.setHours(hours, minutes, 0, 0)
+
+          // If the time has already passed today, schedule for tomorrow
+          if (targetTime <= d) {
+            targetTime.setDate(targetTime.getDate() + 1)
+          }
+
+          return targetTime
+        }
+
+        const morningTime = calculateNextTime(9) // 9:00 AM
+        const afternoonTime = calculateNextTime(14) // 2:00 PM
+
+        await LocalNotifications.schedule({
+          notifications: [
+            {
+              id: notificationIds.first,
+              title: 'Good Day! ☀️',
+              body: 'Time to start your day with energy and purpose!',
+              schedule: { at: firstNotificationTime, allowWhileIdle: true }, // 5 sec delay
+              sound: null,
+              attachments: null,
+              actionTypeId: '',
+              extra: null,
+              autoCancel: true,
+              autoClose: true,
+            },
+            {
+              id: notificationIds.second,
+              title: 'Afternoon Check-in 🌤️',
+              body: 'How are you today?',
+              schedule: { at: secondNotificationTime, allowWhileIdle: true }, // 5 sec delay
+              sound: null,
+              attachments: null,
+              actionTypeId: '',
+              extra: null,
+              autoCancel: true,
+              autoClose: true,
+            },
+            {
+              id: notificationIds.morning,
+              title: 'Good Day! ☀️',
+              body: 'Time to start your day with energy and purpose!',
+              schedule: { at: morningTime, allowWhileIdle: true }, // 5 sec delay
+              sound: null,
+              attachments: null,
+              actionTypeId: '',
+              extra: null,
+              autoCancel: true,
+              autoClose: true,
+            },
+            {
+              id: notificationIds.afternoon,
+              title: 'Afternoon Check-in 🌤️',
+              body: 'How are you today?',
+              schedule: { at: afternoonTime, allowWhileIdle: true }, // 5 sec delay
+              sound: null,
+              attachments: null,
+              actionTypeId: '',
+              extra: null,
+              autoCancel: true,
+              autoClose: true,
+            },
+          ],
+        })
+      } else {
+        console.log('Notification permission denied')
+      }
+    } catch (error) {
+      console.error('Failed to schedule notifications:', error)
+      $q.notify({
+        color: 'red',
+        textColor: 'primary',
+        position: 'top',
+        message: `Failed:${error}`,
+        timeout: 10000,
+      })
+    }
+  }
+}
+
 onMounted(() => {
+  sendNotification()
   useBackButton()
   console.log(audioToggle.value)
   showMenu.value = route.path != '/' && route.path != '/registration' ? true : false
@@ -166,6 +274,9 @@ watch(
   ([{ rname, path }, audioNew]) => {
     showMenu.value = path != '/' && path != '/registration' ? true : false
     console.log('New:' + rname + ' ' + path + ' ' + audioNew)
+    if (path !== '/') {
+      launch.value = false
+    }
     if (rname !== 'exercise' && path !== '/journal' && audioNew) {
       playAudio()
     } else {

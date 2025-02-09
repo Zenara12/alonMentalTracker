@@ -3,8 +3,9 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
+      { path: '', component: () => import('pages/LaunchScreenPage.vue') },
       { path: 'login', component: () => import('pages/IndexPage.vue') },
-      { path: '', component: () => import('pages/RegistrationPage.vue') },
+      { path: 'register', component: () => import('pages/RegistrationPage.vue') },
       { path: 'landing', component: () => import('pages/LandingPage.vue') },
       { path: 'moodcheck', component: () => import('pages/MoodCheckPage.vue') },
       { path: 'breathing', component: () => import('pages/BreathingPage.vue') },

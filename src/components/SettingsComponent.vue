@@ -81,7 +81,7 @@ const savedSize = ref($q.localStorage.getItem('selectedSize'))
 const audioToggle = defineModel()
 console.log(audioToggle.value)
 const notifications = ref($q.localStorage.getItem('notification') || false)
-const darkMode = ref($q.localStorage.getItem('darkMode') || false)
+const darkMode = ref($q.localStorage.getItem('darkMode') || $q.dark.isActive)
 const font = ref('Roboto')
 
 const fontSize = ref({
