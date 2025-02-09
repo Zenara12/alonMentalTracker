@@ -15,24 +15,12 @@
         </div>
         <div class="row q-col-gutter-md q-mt-xs">
           <div v-for="(n, index) in 7" :key="index" class="col-3 text-center">
-            <q-btn
-              @click="changeEmotion(index)"
-              round
-              size="md"
-              v-if="emotions[n - 1].icon.split('.')[1] == 'png'"
-            >
+            <q-btn @click="changeEmotion(index)" round size="md">
               <q-avatar :size="buttonAvatarSize">
                 <img :src="`/images/${emotions[n - 1].icon}`" />
               </q-avatar>
             </q-btn>
-            <q-btn
-              v-else
-              @click="changeEmotion(index)"
-              round
-              :color="emotions[n - 1].color"
-              :icon="emotions[n - 1].icon"
-            />
-            <div class="q-mt-sm text-weight-bolder text-subtitle1">
+            <div class="q-mt-sm text-weight-bolder text-subtitle1 text-primary">
               {{ emotions[n - 1].name }}
             </div>
           </div>
@@ -50,7 +38,7 @@
         <q-card-actions class="text-primary`" align="center">
           <q-btn @click="emotionReset" icon="sync" push color="primary"></q-btn>
           <q-space />
-          <div class="column items-center justify-center content-center">
+          <div class="column items-center justify-center content-center text-primary">
             <div class="text-weight-bold text-h6">{{ emotions[currentEmotion].range }}/100</div>
             <div class="text-weight-bolder text-h5">{{ emotions[currentEmotion].name }} Button</div>
           </div>
@@ -82,23 +70,11 @@
 
           <q-card-section>
             <div v-for="(n, index) in 5" :key="index" class="col-3 text-center">
-              <q-btn
-                @click="sortEmotions(n + 6)"
-                round
-                size="md"
-                v-if="emotions[n + 6].icon.split('.')[1] == 'png'"
-              >
+              <q-btn @click="sortEmotions(n + 6)" round size="md">
                 <q-avatar :size="buttonAvatarSize">
                   <img :src="`/images/${emotions[n + 6].icon}`" />
                 </q-avatar>
               </q-btn>
-              <q-btn
-                v-else
-                @click="sortEmotions(n + 6)"
-                round
-                :color="emotions[n + 6].color"
-                :icon="emotions[n + 6].icon"
-              />
               <div class="q-mt-sm text-weight-bolder text-subtitle1">
                 {{ emotions[n + 6].name }}
               </div>
@@ -153,7 +129,7 @@
         <q-card-actions align="center">
           <q-btn class="" @click="activityReset" icon="sync" push color="primary"></q-btn>
           <q-space />
-          <div class="column items-center justify-center content-center">
+          <div class="column items-center justify-center content-center text-primary">
             <div class="text-h6">{{ activities[currentActivity].range }}/100</div>
             <div class="text-weight-bolder text-h6">
               {{ activities[currentActivity].name }} Button
@@ -322,6 +298,7 @@ const sortActivities = (index) => {
 //initialize
 const listEmotions = $q.localStorage.getItem('emotions')
 const listActivities = $q.localStorage.getItem('activities')
+const firstLastEmotions = $q.localStorage.getItem('initialEmo')
 
 const emotions = reactive([
   { name: 'Cheerful', icon: 'cheerful.png', color: 'green', range: 0 },
@@ -331,11 +308,11 @@ const emotions = reactive([
   { name: 'Sick', icon: 'sick.png', color: 'purple', range: 0 },
   { name: 'Anxious', icon: 'anxious.png', color: 'orange', range: 0 },
   { name: 'Jealous', icon: 'jealous.png', color: 'green', range: 0 },
-  { name: 'Frustrated', icon: 'person', color: 'yellow', range: 0 },
-  { name: 'Stress', icon: 'person', color: 'light-blue', range: 0 },
-  { name: 'Confuse', icon: 'person', color: 'purple', range: 0 },
-  { name: 'Dumb', icon: 'person', color: 'orange', range: 0 },
-  { name: 'Fresh', icon: 'person', color: 'green', range: 0 },
+  { name: 'Bubbly', icon: 'bubbly.png', color: 'yellow', range: 0 },
+  { name: 'Stress', icon: 'stress.png', color: 'light-blue', range: 0 },
+  { name: 'Confuse', icon: 'confuse.png', color: 'purple', range: 0 },
+  { name: 'Dumb', icon: 'dumb.png', color: 'orange', range: 0 },
+  { name: 'Fresh', icon: 'fresh.png', color: 'green', range: 0 },
 ])
 
 const activities = reactive([
@@ -353,7 +330,12 @@ const activities = reactive([
   { name: 'Gaming', icon: 'sports_esports', color: 'green', range: 0 },
 ])
 
-if (listEmotions) Object.assign(emotions, listEmotions)
+if (firstLastEmotions) {
+  if (listEmotions) Object.assign(emotions, listEmotions)
+} else {
+  $q.localStorage.setItem('initialEmo', true)
+}
+
 if (listActivities) Object.assign(activities, listActivities)
 
 onBeforeUnmount(() => {

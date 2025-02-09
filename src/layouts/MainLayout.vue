@@ -31,16 +31,41 @@
                 :key="index"
                 :to="item.navigate"
               >
-                <q-item-section avatar>
+                <q-item-section
+                  avatar
+                  v-if="item.icon === 'settings'"
+                  @click="settingsDisplay = true"
+                >
                   <q-icon color="primary" :name="item.icon" />
                 </q-item-section>
-                <q-item-section class="text-primary">{{ item.title }}</q-item-section>
+                <q-item-section avatar v-else>
+                  <q-icon color="primary" :name="item.icon" />
+                </q-item-section>
+                <q-item-section
+                  class="text-primary"
+                  v-if="item.icon === 'settings'"
+                  ripple
+                  @click="settingsDisplay = true"
+                  >{{ item.title }}</q-item-section
+                >
+                <q-item-section class="text-primary" v-else>{{ item.title }}</q-item-section>
               </q-item>
             </q-list>
           </q-menu>
         </q-btn>
       </q-toolbar>
     </q-header>
+
+    <q-dialog v-model="settingsDisplay">
+      <q-card style="width: 800px; max-width: 110vw">
+        <q-card-section>
+          <SettingsComponent v-model="audioToggle" />
+        </q-card-section>
+        <q-card-actions align="right" class="bg-white text-teal">
+          <q-btn flat label="Close" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -52,6 +77,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { ref, watch, onMounted } from 'vue'
 import { useBackButton } from 'src/backButtonHandler'
 import { useQuasar } from 'quasar'
+import SettingsComponent from 'src/components/SettingsComponent.vue'
 
 const $q = useQuasar()
 
@@ -63,7 +89,9 @@ const audioBg = new Audio('/audios/alon-bg-music.mp3')
 audioBg.loop = true
 const userInteracted = ref(false)
 
-const audioToggle = ref($q.localStorage.getItem('sound'))
+const audioToggle = ref($q.localStorage.getItem('sound') || false)
+
+const settingsDisplay = ref(false)
 
 const playAudio = () => {
   if (userInteracted.value && audioBg.paused) {
@@ -88,9 +116,9 @@ const selectedSize = ref({
   value: '1rem',
 })
 
-const savedFont = ref($q.localStorage.getItem('selectedFont'))
-const savedSize = ref($q.localStorage.getItem('selectedSize'))
-const darkMode = ref($q.localStorage.getItem('darkMode'))
+const savedFont = ref($q.localStorage.getItem('selectedFont') || false)
+const savedSize = ref($q.localStorage.getItem('selectedSize') || false)
+const darkMode = ref($q.localStorage.getItem('darkMode') || false)
 
 const updateFontFamily = (font) => {
   document.body.style.fontFamily = font
@@ -113,7 +141,7 @@ const initFontPreferences = () => {
 }
 const toggleDarkMode = () => {
   $q.dark.set(darkMode.value) // Enable/disable dark mode
-  $q.localStorage.setItem('darkMode', darkMode.value.toString()) // Save preference
+  $q.localStorage.setItem('darkMode', darkMode.value) // Save preference
 }
 
 onMounted(() => {
@@ -134,21 +162,15 @@ onMounted(() => {
 
 //check if index or not
 watch(
-  () => ({ rname: route.params.rname, path: route.path }),
-  ({ rname, path }) => {
+  () => [{ rname: route.params.rname, path: route.path }, audioToggle.value],
+  ([{ rname, path }, audioNew]) => {
     showMenu.value = path != '/' && path != '/registration' ? true : false
-
-    if (rname !== 'exercise' && path !== '/journal' && audioToggle.value) {
+    console.log('New:' + rname + ' ' + path + ' ' + audioNew)
+    if (rname !== 'exercise' && path !== '/journal' && audioNew) {
       playAudio()
     } else {
       pauseAudio()
     }
-  },
-)
-watch(
-  () => audioToggle.value,
-  (value) => {
-    console.log(value)
   },
 )
 
@@ -171,7 +193,7 @@ const menuList = [
   {
     title: 'Settings',
     icon: 'settings',
-    navigate: 'settings',
+    navigate: '',
   },
   {
     title: 'About',
