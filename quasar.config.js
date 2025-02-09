@@ -11,7 +11,7 @@ export default defineConfig((/* ctx */) => {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['fileSystem/profilePic.js'],
+    boot: ['fileSystem/profilePic.js', 'localNotif.js'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
     css: ['app.scss'],
@@ -80,6 +80,7 @@ export default defineConfig((/* ctx */) => {
     framework: {
       config: {
         dark: 'auto',
+        notify: {},
       },
 
       // iconSet: 'material-icons', // Quasar icon set

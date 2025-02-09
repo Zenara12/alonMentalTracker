@@ -12,12 +12,17 @@
     </q-card-section>
 
     <q-card-actions align="evenly" class="q-pa-md">
-      <q-btn icon="close" @click="closeCamera" color="red" />
+      <q-btn v-if="!isRecording" icon="close" @click="closeCamera" color="red" />
 
       <q-btn v-if="isPhoto" @click="capturePhoto" color="green" icon="camera" />
-      <q-btn v-if="isVideo" @click="startRecording" color="blue" icon="videocam" />
+      <q-btn v-if="isVideo && !isRecording" @click="startRecording" color="blue" icon="videocam" />
       <q-btn v-if="isRecording" @click="stopRecording" color="red" icon="stop_circle" />
-      <q-btn v-if="isStreamActive" @click="switchCamera" color="warning" icon="flip_camera_ios" />
+      <q-btn
+        v-if="isStreamActive && !isRecording"
+        @click="switchCamera"
+        color="warning"
+        icon="flip_camera_ios"
+      />
     </q-card-actions>
   </div>
 
@@ -42,7 +47,7 @@
 </template>
 
 <script setup>
-import { ref, onUnmounted, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onUnmounted, onMounted, onBeforeUnmount, onBeforeMount } from 'vue'
 
 // Refs
 const videoRef = ref(null)
@@ -82,6 +87,8 @@ const getConstraints = (facingMode = 'environment') => ({
 const captureBack = async () => {
   capturedPhotoUrl.value = null
   recordedVideoUrl.value = null
+  capturedPhotoFile.value = null
+  recordedVideoFile.value = null
   await startCamera()
 }
 
@@ -107,18 +114,19 @@ const stopCamera = () => {
   if (stream.value) {
     stream.value.getTracks().forEach((track) => track.stop())
     stream.value = null
-    isStreamActive.value = false
-
-    if (camCategory === 'photo') {
-      isPhoto.value = false
-    } else if (camCategory === 'video') {
-      isVideo.value = false
-    }
-
-    if (videoRef.value) {
-      videoRef.value.srcObject = null
-    }
   }
+  if (mirroredStream) {
+    mirroredStream.getTracks().forEach((track) => track.stop())
+    mirroredStream = null
+  }
+  isStreamActive.value = false
+
+  if (camCategory === 'photo') {
+    isPhoto.value = false
+  } else if (camCategory === 'video') {
+    isVideo.value = false
+  }
+  videoRef.value.srcObject = null
 }
 
 // Switch camera
@@ -250,6 +258,15 @@ const downloadVideo = () => {
 
 onMounted(() => {
   startCamera()
+})
+onBeforeMount(() => {
+  // Clean up blob URLs
+  recordedVideoUrl.value.forEach((file) => {
+    URL.revokeObjectURL(file.url)
+  })
+  capturedPhotoUrl.value.forEach((file) => {
+    URL.revokeObjectURL(file.url)
+  })
 })
 
 // Cleanup on component unmount

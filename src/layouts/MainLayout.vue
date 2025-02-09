@@ -52,6 +52,31 @@ import { useRouter, useRoute } from 'vue-router'
 import { ref, watch, onMounted } from 'vue'
 import { useBackButton } from 'src/backButtonHandler'
 import { useQuasar } from 'quasar'
+import { LocalNotifications } from '@capacitor/local-notifications'
+
+const sendNotif = async () => {
+  const permStatus = await LocalNotifications.requestPermissions()
+  if (permStatus.display === 'granted') {
+    await LocalNotifications.schedule({
+      notifications: [
+        {
+          id: 2,
+          title: 'Good Morning! ☀️',
+          body: 'Start your day with a smile!',
+          schedule: {
+            repeats: true,
+            every: 'day',
+            allowWhileIdle: true, // Ensures it works even if the app is not running
+            on: { hour: 8, minute: 20 }, // Set time to 8:00 AM
+          },
+        },
+      ],
+    })
+  } else {
+    console.log('Notification permission denied')
+  }
+}
+sendNotif()
 
 const $q = useQuasar()
 

@@ -312,26 +312,11 @@ const closeRecorder = (value) => {
   recorderDisplay.value = value
 }
 
-// const triggerFileInput = (input) => {
-//   if (input === 'image') fileImage.value.$el.click()
-//   if (input === 'audio') fileAudio.value.$el.click()
-//   if (input === 'video') fileVideo.value.$el.click()
-// }
-
-// const fileSelected = (newFile) => {
-//   compiledFiles.value.push(newFile)
-//   //console.log(compiledFiles.value)
-// }
-
 const capturedImage = async (imageCaptured) => {
   closeCam(false)
   compiledFiles.value.push(imageCaptured)
   const file = await readFile(imageCaptured)
   previewFiles.push({ url: file, type: 'image' })
-  //console.log(compiledFiles.value)
-  //console.log(previewFiles)
-  // displayFiles()
-  // displayFiles()
 }
 
 const readFile = async (file) => {
@@ -348,9 +333,6 @@ const capturedVideo = async (videoCaptured) => {
   compiledFiles.value.push(videoCaptured)
   const file = await readFile(videoCaptured)
   previewFiles.push({ url: file, type: 'video' })
-  //console.log(compiledFiles.value)
-  //console.log(previewFiles)
-  //console.log(imageCaptured)
 }
 
 const recordedAudio = async (audio) => {
@@ -358,8 +340,6 @@ const recordedAudio = async (audio) => {
   compiledFiles.value.push(audio)
   const file = await readFile(audio)
   previewFiles.push({ url: file, type: 'audio' })
-  //console.log(compiledFiles.value)
-  //console.log(previewFiles)
 }
 
 const deleteCurrentFile = (index, pointer) => {
@@ -367,12 +347,9 @@ const deleteCurrentFile = (index, pointer) => {
     compiledFiles.value.splice(index, 1)
     previewFiles.splice(index, 1)
   } else if (pointer === 'journal') {
-    //console.log(journalFiles)
     journalFiles.splice(index, 1)
     journalFiles.value.splice(index, 1)
   }
-  // console.log(compiledFiles.value)
-  //console.log(previewFiles)
 }
 
 const noteDisplay = async (index) => {
@@ -385,7 +362,6 @@ const noteDisplay = async (index) => {
       return await getFiles(value)
     }),
   )
-  //console.log(journalFiles.value)
 }
 
 const insertJournal = (journalEntry) => {
@@ -421,7 +397,6 @@ const saveJournal = async () => {
       }
     }
     finalFile = [...fileUpload]
-    //console.log(journalFiles)
     if (crudData.value !== 'insert' && journalFiles.value.length > 0) {
       let JournalS = journalFiles.value.map((value) => {
         return value.returnData
