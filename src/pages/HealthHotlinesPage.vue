@@ -6,7 +6,7 @@
       <q-card
         v-for="(hotline, index) in hotlines"
         :key="index"
-        class="transparent-card-60 q-pa-md q-mb-md text-center"
+        class="transparent-card-40 q-pa-md q-mb-md text-center"
       >
         <q-card-section>
           <div class="text-weight-bold text-h6">{{ hotline.name }}</div>

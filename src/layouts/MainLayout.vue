@@ -52,31 +52,6 @@ import { useRouter, useRoute } from 'vue-router'
 import { ref, watch, onMounted } from 'vue'
 import { useBackButton } from 'src/backButtonHandler'
 import { useQuasar } from 'quasar'
-import { LocalNotifications } from '@capacitor/local-notifications'
-
-const sendNotif = async () => {
-  const permStatus = await LocalNotifications.requestPermissions()
-  if (permStatus.display === 'granted') {
-    await LocalNotifications.schedule({
-      notifications: [
-        {
-          id: 2,
-          title: 'Good Morning! ☀️',
-          body: 'Start your day with a smile!',
-          schedule: {
-            repeats: true,
-            every: 'day',
-            allowWhileIdle: true, // Ensures it works even if the app is not running
-            on: { hour: 8, minute: 20 }, // Set time to 8:00 AM
-          },
-        },
-      ],
-    })
-  } else {
-    console.log('Notification permission denied')
-  }
-}
-sendNotif()
 
 const $q = useQuasar()
 
@@ -87,6 +62,8 @@ const showMenu = ref(true)
 const audioBg = new Audio('/audios/alon-bg-music.mp3')
 audioBg.loop = true
 const userInteracted = ref(false)
+
+const audioToggle = ref($q.localStorage.getItem('sound'))
 
 const playAudio = () => {
   if (userInteracted.value && audioBg.paused) {
@@ -141,13 +118,14 @@ const toggleDarkMode = () => {
 
 onMounted(() => {
   useBackButton()
+  console.log(audioToggle.value)
   showMenu.value = route.path != '/' && route.path != '/registration' ? true : false
   initFontPreferences()
   document.addEventListener('click', enableAudio, { once: true }) // Only triggers once
   if (darkMode.value) {
     toggleDarkMode()
   }
-  if (route.params.rname !== 'exercise' && route.path !== '/journal') {
+  if (route.params.rname !== 'exercise' && route.path !== '/journal' && audioToggle.value) {
     playAudio()
   } else {
     pauseAudio()
@@ -160,11 +138,17 @@ watch(
   ({ rname, path }) => {
     showMenu.value = path != '/' && path != '/registration' ? true : false
 
-    if (rname !== 'exercise' && path !== '/journal') {
+    if (rname !== 'exercise' && path !== '/journal' && audioToggle.value) {
       playAudio()
     } else {
       pauseAudio()
     }
+  },
+)
+watch(
+  () => audioToggle.value,
+  (value) => {
+    console.log(value)
   },
 )
 

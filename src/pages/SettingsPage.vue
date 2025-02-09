@@ -15,7 +15,16 @@
             <q-item-label>Notifications</q-item-label>
           </q-item-section>
           <q-item-section side>
-            <q-toggle v-model="notifications" />
+            <q-toggle v-model="notifications" @update:model-value="toggleNotification" />
+          </q-item-section>
+        </q-item>
+
+        <q-item>
+          <q-item-section>
+            <q-item-label>Sound</q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-toggle v-model="sound" @update:model-value="toggleSound" />
           </q-item-section>
         </q-item>
 
@@ -73,9 +82,11 @@ const $q = useQuasar()
 const savedFont = ref($q.localStorage.getItem('selectedFont'))
 const savedSize = ref($q.localStorage.getItem('selectedSize'))
 
-const notifications = ref(false)
-const darkMode = ref($q.dark.isActive)
+const notifications = ref($q.localStorage.getItem('notification') || false)
+const sound = ref($q.localStorage.getItem('sound') || false)
+const darkMode = ref($q.localStorage.getItem('darkMode') || false)
 const font = ref('Roboto')
+
 const fontSize = ref({
   label: 'Small',
   value: '1rem',
@@ -118,8 +129,15 @@ const initFont = () => {
 
 const toggleDarkMode = () => {
   $q.dark.set(darkMode.value) // Enable/disable dark mode
-  $q.localStorage.setItem('darkMode', darkMode.value.toString()) // Save preference
+  $q.localStorage.setItem('darkMode', darkMode.value) // Save preference
 }
 
+const toggleNotification = () => {
+  $q.localStorage.setItem('notification', notifications.value)
+}
+
+const toggleSound = () => {
+  $q.localStorage.setItem('sound', sound.value)
+}
 initFont()
 </script>
