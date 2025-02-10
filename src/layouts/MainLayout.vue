@@ -254,7 +254,7 @@ const sendNotification = async () => {
 onMounted(() => {
   sendNotification()
   useBackButton()
-  console.log(audioToggle.value)
+  //console.log(audioToggle.value)
   showMenu.value = route.path != '/' && route.path != '/registration' ? true : false
   initFontPreferences()
   document.addEventListener('click', enableAudio, { once: true }) // Only triggers once
@@ -273,7 +273,7 @@ watch(
   () => [{ rname: route.params.rname, path: route.path }, audioToggle.value],
   ([{ rname, path }, audioNew]) => {
     showMenu.value = path != '/' && path != '/registration' ? true : false
-    console.log('New:' + rname + ' ' + path + ' ' + audioNew)
+    //console.log('New:' + rname + ' ' + path + ' ' + audioNew)
     if (path !== '/') {
       launch.value = false
     }

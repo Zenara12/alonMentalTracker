@@ -20,7 +20,7 @@
                 <img :src="`/images/${emotions[n - 1].icon}`" />
               </q-avatar>
             </q-btn>
-            <div class="q-mt-sm text-weight-bolder text-subtitle1 text-primary">
+            <div class="q-mt-sm text-weight-bolder text-subtitle1">
               {{ emotions[n - 1].name }}
             </div>
           </div>
@@ -35,10 +35,10 @@
       </q-card>
 
       <q-card flat outlined v-show="showEmotion" class="q-mt-md transparent-card-40">
-        <q-card-actions class="text-primary`" align="center">
+        <q-card-actions align="center">
           <q-btn @click="emotionReset" icon="sync" push color="primary"></q-btn>
           <q-space />
-          <div class="column items-center justify-center content-center text-primary">
+          <div class="column items-center justify-center content-center">
             <div class="text-weight-bold text-h6">{{ emotions[currentEmotion].range }}/100</div>
             <div class="text-weight-bolder text-h5">{{ emotions[currentEmotion].name }} Button</div>
           </div>
@@ -119,9 +119,9 @@
       </q-card>
       <q-card flat outlined v-show="showActivity" class="q-mt-md transparent-card-40">
         <q-card-actions align="center">
-          <q-btn class="" @click="activityReset" icon="sync" push color="primary"></q-btn>
+          <q-btn @click="activityReset" icon="sync" push color="primary"></q-btn>
           <q-space />
-          <div class="column items-center justify-center content-center text-primary">
+          <div class="column items-center justify-center content-center">
             <div class="text-h6">{{ activities[currentActivity].range }}/100</div>
             <div class="text-weight-bolder text-h6">
               {{ activities[currentActivity].name }} Button
@@ -251,7 +251,7 @@ const activityAddRange = () => {
     $q.notify({
       color: 'white',
       textColor: 'primary',
-      position: 'top',
+      position: 'center',
       message: `${activities[currentActivity.value].name} Activity has reach Maximum`,
       timeout: 3000,
     })
@@ -279,7 +279,7 @@ const sortActivities = (index) => {
 const listEmotions = $q.localStorage.getItem('emotions')
 const listActivities = $q.localStorage.getItem('activities')
 const firstLastEmotions = $q.localStorage.getItem('initialEmo')
-const firstLastActivities = $q.localStorage.getItem('initialAct')
+const firstLastActivities = $q.localStorage.getItem('initialAct2')
 
 const emotions = reactive([
   { name: 'Cheerful', icon: 'cheerful.png', color: 'green', range: 0 },
@@ -308,7 +308,7 @@ const activities = reactive([
   { name: 'Camping', icon: 'camping.png', color: 'grey', range: 0 },
   { name: 'Shopping', icon: 'shopping.png', color: 'purple', range: 0 },
   { name: 'Eating', icon: 'food.png', color: 'orange', range: 0 },
-  { name: 'Gaming', icon: 'gaming.png', color: 'green', range: 0 },
+  { name: 'GamingG', icon: 'gaming.png', color: 'green', range: 0 },
 ])
 
 if (firstLastEmotions) {
@@ -320,7 +320,7 @@ if (firstLastEmotions) {
 if (firstLastActivities) {
   if (listActivities) Object.assign(activities, listActivities)
 } else {
-  $q.localStorage.setItem('initialAct', true)
+  $q.localStorage.setItem('initialAct2', true)
 }
 
 onBeforeUnmount(() => {
