@@ -148,6 +148,7 @@ const stopVisualizer = () => {
 }
 
 onUnmounted(() => {
+  stopRecording()
   clearInterval(timer)
 })
 </script>

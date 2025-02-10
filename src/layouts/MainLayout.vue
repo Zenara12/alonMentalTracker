@@ -160,13 +160,11 @@ const sendNotification = async () => {
         // Define fixed integer IDs for notifications
         const notificationIds = {
           first: parseInt(d.getTime() % 100000000),
-          second: parseInt((d.getTime() % 100000000) + 1),
 
           morning: parseInt((d.getTime() % 100000000) + 2),
           afternoon: parseInt((d.getTime() % 100000000) + 3),
         }
         const firstNotificationTime = new Date(d.getTime() + 5000) // 1 minute from now
-        const secondNotificationTime = new Date(d.getTime() + 10000)
 
         const calculateNextTime = (hours, minutes = 0) => {
           const targetTime = new Date()
@@ -190,18 +188,6 @@ const sendNotification = async () => {
               title: 'Good Day! ☀️',
               body: 'Time to start your day with energy and purpose!',
               schedule: { at: firstNotificationTime, allowWhileIdle: true }, // 5 sec delay
-              sound: null,
-              attachments: null,
-              actionTypeId: '',
-              extra: null,
-              autoCancel: true,
-              autoClose: true,
-            },
-            {
-              id: notificationIds.second,
-              title: 'Afternoon Check-in 🌤️',
-              body: 'How are you today?',
-              schedule: { at: secondNotificationTime, allowWhileIdle: true }, // 5 sec delay
               sound: null,
               attachments: null,
               actionTypeId: '',

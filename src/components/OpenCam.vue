@@ -80,7 +80,14 @@ const closeCamera = () => {
 // Camera constraints (Includes Audio)
 const getConstraints = (facingMode = 'environment') => ({
   video: { facingMode },
-  audio: camCategory === 'video' ? true : false,
+  audio:
+    camCategory === 'video'
+      ? {
+          echoCancellation: true, // Reduces echo
+          noiseSuppression: true, // Reduces background noise
+          autoGainControl: true, // Prevents loud audio
+        }
+      : false,
 })
 
 //captureback
@@ -102,7 +109,13 @@ const startCamera = async () => {
       videoRef.value.srcObject = stream.value
       isStreamActive.value = true
       if (camCategory === 'photo') isPhoto.value = true
-      else if (camCategory === 'video') isVideo.value = true
+      else if (camCategory === 'video') {
+        isVideo.value = true
+
+        stream.value.getAudioTracks().forEach((track) => {
+          track.enabled = false // Mutes the track without removing it
+        })
+      }
     }
   } catch (error) {
     console.error('Camera error:', error)
@@ -126,7 +139,9 @@ const stopCamera = () => {
   } else if (camCategory === 'video') {
     isVideo.value = false
   }
-  videoRef.value.srcObject = null
+  if (videoRef.value !== null) {
+    videoRef.value.srcObject = null
+  }
 }
 
 // Switch camera
@@ -261,12 +276,20 @@ onMounted(() => {
 })
 onBeforeMount(() => {
   // Clean up blob URLs
-  recordedVideoUrl.value.forEach((file) => {
-    URL.revokeObjectURL(file.url)
-  })
-  capturedPhotoUrl.value.forEach((file) => {
-    URL.revokeObjectURL(file.url)
-  })
+  try {
+    if (recordedVideoUrl.value) {
+      recordedVideoUrl.value.forEach((file) => {
+        URL.revokeObjectURL(file.url)
+      })
+    }
+    if (capturedPhotoUrl.value) {
+      capturedPhotoUrl.value.forEach((file) => {
+        URL.revokeObjectURL(file.url)
+      })
+    }
+  } catch (error) {
+    console.log(error)
+  }
 })
 
 // Cleanup on component unmount
