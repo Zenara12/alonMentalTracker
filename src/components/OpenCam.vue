@@ -90,12 +90,15 @@ const getConstraints = (facingMode = 'environment') => ({
       : false,
 })
 
-//captureback
-const captureBack = async () => {
+const cleanData = () => {
   capturedPhotoUrl.value = null
   recordedVideoUrl.value = null
   capturedPhotoFile.value = null
   recordedVideoFile.value = null
+}
+//captureback
+const captureBack = async () => {
+  cleanData()
   await startCamera()
 }
 
@@ -112,9 +115,7 @@ const startCamera = async () => {
       else if (camCategory === 'video') {
         isVideo.value = true
 
-        stream.value.getAudioTracks().forEach((track) => {
-          track.enabled = false // Mutes the track without removing it
-        })
+        videoRef.value.muted = true
       }
     }
   } catch (error) {
@@ -133,6 +134,9 @@ const stopCamera = () => {
     mirroredStream = null
   }
   isStreamActive.value = false
+  mediaRecorder = null
+  recordedChunks = []
+  mirroredStream = null
 
   if (camCategory === 'photo') {
     isPhoto.value = false
@@ -141,6 +145,7 @@ const stopCamera = () => {
   }
   if (videoRef.value !== null) {
     videoRef.value.srcObject = null
+    videoRef.value = null
   }
 }
 
@@ -197,6 +202,7 @@ const createMirroredStream = async (originalStream) => {
   const ctx = canvas.getContext('2d')
 
   video.srcObject = originalStream
+  video.muted = true // Prevent audio feedback from playback
   await new Promise((resolve) => (video.onloadedmetadata = resolve))
   video.play()
 
@@ -216,11 +222,20 @@ const createMirroredStream = async (originalStream) => {
   }, 1000 / frameRate)
 
   const audioTracks = originalStream.getAudioTracks()
+  const newStream = new MediaStream()
+  newStream.addTrack(videoTrack)
+
   if (audioTracks.length > 0) {
-    stream.addTrack(audioTracks[0])
+    audioTracks[0].applyConstraints({
+      echoCancellation: true,
+      noiseSuppression: true,
+      autoGainControl: true,
+    })
+
+    newStream.addTrack(audioTracks[0])
   }
 
-  return stream
+  return newStream
 }
 
 // Start Video Recording
@@ -294,9 +309,11 @@ onBeforeMount(() => {
 
 // Cleanup on component unmount
 onUnmounted(() => {
+  cleanData()
   stopCamera()
 })
 onBeforeUnmount(() => {
+  cleanData()
   stopCamera()
 })
 </script>

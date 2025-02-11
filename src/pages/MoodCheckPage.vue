@@ -1,5 +1,5 @@
 <template>
-  <q-page class="text-primary q-pa-md" style="position: relative; overflow: hidden">
+  <q-page class="text-white q-pa-md" style="position: relative; overflow: hidden">
     <div
       class="text-h4 text-white text-weight-bolder q-mt-lg"
       style="z-index: 2; display: block; position: relative"
@@ -10,9 +10,7 @@
     <!---Emotions sections-->
     <div style="z-index: 2; display: block; position: relative">
       <q-card class="q-pa-md bg-transparent" flat>
-        <div class="text-subtitle1 text-weight-bolder q-py-sm q-px-sm bg-info text-white">
-          Emotions
-        </div>
+        <div class="text-subtitle1 text-weight-bolder q-py-sm q-px-sm bg-info">Emotions</div>
         <div class="row q-col-gutter-md q-mt-xs">
           <div v-for="(n, index) in 7" :key="index" class="col-3 text-center">
             <q-btn @click="changeEmotion(index)" round size="md">
@@ -65,7 +63,7 @@
       </q-card>
 
       <q-dialog v-model="extraEmotions" backdrop-filter="blur(4px)">
-        <q-card class="bg-primary text-white">
+        <q-card class="bg-primary">
           <q-card-section class="row items-center q-pb-none text-h6"> Emotions </q-card-section>
 
           <q-card-section>
@@ -89,9 +87,7 @@
 
       <!---Activities sections-->
       <q-card class="q-pa-md q-mt-md bg-transparent" flat>
-        <div
-          class="bg-info text-white text-subtitle1 text-weight-bolder q-py-sm q-px-sm rounded-borders"
-        >
+        <div class="bg-info text-subtitle1 text-weight-bolder q-py-sm q-px-sm rounded-borders">
           Activities
         </div>
         <div class="row q-col-gutter-md q-mt-xs">
@@ -151,7 +147,7 @@
 
       <q-dialog v-model="extraActivities" backdrop-filter="blur(4px)">
         <q-card class="bg-primary text-white">
-          <q-card-section class="row items-center q-pb-none text-h6"> Emotions </q-card-section>
+          <q-card-section class="row items-center q-pb-none text-h6"> Activities </q-card-section>
 
           <q-card-section>
             <div v-for="(n, index) in 5" :key="index" class="col-3 text-center">
