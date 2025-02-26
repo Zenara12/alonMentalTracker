@@ -181,6 +181,16 @@ const $q = useQuasar()
 const waveFillCount = ref(1000)
 const waveColor = ref('blue')
 
+const notifPopup = (msg) => {
+  $q.notify({
+    color: 'white',
+    textColor: 'primary',
+    position: 'center',
+    message: msg,
+    timeout: 3000,
+  })
+}
+
 //Emotion scripts
 const showEmotion = ref(false)
 const extraEmotions = ref(false)
@@ -197,13 +207,7 @@ const emotionsAddRange = () => {
     emotions[currentEmotion.value].range++
     waveCount(emotions[currentEmotion.value].range)
   } else {
-    $q.notify({
-      color: 'white',
-      textColor: 'primary',
-      position: 'top',
-      message: `${emotions[currentEmotion.value].name} Emotion has reach Maximum`,
-      timeout: 3000,
-    })
+    notifPopup(`${emotions[currentEmotion.value].name} Emotion has reach Maximum`)
   }
 }
 const emotionsMinusRange = () => {
@@ -244,13 +248,7 @@ const activityAddRange = () => {
     activities[currentActivity.value].range++
     waveCount(activities[currentActivity.value].range)
   } else {
-    $q.notify({
-      color: 'white',
-      textColor: 'primary',
-      position: 'center',
-      message: `${activities[currentActivity.value].name} Activity has reach Maximum`,
-      timeout: 3000,
-    })
+    notifPopup(`${activities[currentActivity.value].name} Activity has reach Maximum`)
   }
 }
 const activityMinusRange = () => {
