@@ -1,10 +1,10 @@
 <template>
-  <q-page class="q-pa-md">
-    <div class="text-h4 q-mb-lg">SETTINGS</div>
+  <q-page class="q-pa-md text-cyan">
+    <div class="text-h4 text-white q-mb-lg q-mt-xl">SETTINGS</div>
 
     <q-card>
       <q-list>
-        <q-item clickable v-ripple>
+        <q-item clickable v-ripple to="/profile">
           <q-item-section>
             <q-item-label>Profile</q-item-label>
           </q-item-section>
@@ -15,7 +15,16 @@
             <q-item-label>Notifications</q-item-label>
           </q-item-section>
           <q-item-section side>
-            <q-toggle v-model="notifications" />
+            <q-toggle v-model="notifications" @update:model-value="toggleNotification" />
+          </q-item-section>
+        </q-item>
+
+        <q-item>
+          <q-item-section>
+            <q-item-label>Sound</q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-toggle v-model="sound" @update:model-value="toggleSound" />
           </q-item-section>
         </q-item>
 
@@ -24,7 +33,7 @@
             <q-item-label>Dark Mode</q-item-label>
           </q-item-section>
           <q-item-section side>
-            <q-toggle v-model="darkMode" />
+            <q-toggle v-model="darkMode" @update:model-value="toggleDarkMode" />
           </q-item-section>
         </q-item>
 
@@ -33,7 +42,12 @@
             <q-item-label>Font</q-item-label>
           </q-item-section>
           <q-item-section side>
-            <q-select v-model="font" :options="fontOptions" dense />
+            <q-select
+              v-model="font"
+              :options="fontOptions"
+              dense
+              @update:model-value="updateFontFamily"
+            />
           </q-item-section>
         </q-item>
 
@@ -42,7 +56,16 @@
             <q-item-label>Size</q-item-label>
           </q-item-section>
           <q-item-section side>
-            <q-select v-model="fontSize" :options="fontSizeOptions" dense />
+            <q-select
+              v-model="fontSize"
+              :options="fontSizeOptions"
+              option-value="value"
+              option-label="label"
+              label="Font Size"
+              outlined
+              map-options
+              @update:model-value="updateFontSize"
+            />
           </q-item-section>
         </q-item>
       </q-list>
@@ -52,11 +75,69 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useQuasar } from 'quasar'
 
-const notifications = ref(false)
-const darkMode = ref(false)
-const font = ref('Default')
-const fontSize = ref('Medium')
-const fontOptions = ref(['Default', 'Sans-serif', 'Serif', 'Monospace'])
-const fontSizeOptions = ref(['Small', 'Medium', 'Large'])
+const $q = useQuasar()
+
+const savedFont = ref($q.localStorage.getItem('selectedFont'))
+const savedSize = ref($q.localStorage.getItem('selectedSize'))
+
+const notifications = ref($q.localStorage.getItem('notification') || false)
+const sound = ref($q.localStorage.getItem('sound') || false)
+const darkMode = ref($q.localStorage.getItem('darkMode') || false)
+const font = ref('Roboto')
+
+const fontSize = ref({
+  label: 'Small',
+  value: '1rem',
+})
+const fontOptions = ref(['Roboto', 'Arial', 'Helvetica', 'Times New Roman', 'Georgia', 'Verdana'])
+const fontSizeOptions = ref([
+  {
+    label: 'Small',
+    value: '1rem',
+  },
+  {
+    label: 'Medium',
+    value: '1.5rem',
+  },
+  {
+    label: 'Large',
+    value: '2rem',
+  },
+])
+
+const updateFontFamily = (font) => {
+  document.body.style.fontFamily = font
+  $q.localStorage.setItem('selectedFont', font)
+}
+
+const updateFontSize = (size) => {
+  document.body.style.fontSize = size.value
+  $q.localStorage.setItem('selectedSize', size)
+}
+
+const initFont = () => {
+  if (savedFont.value) {
+    font.value = savedFont.value
+  }
+
+  if (savedSize.value) {
+    fontSize.value = savedSize.value
+  }
+}
+
+const toggleDarkMode = () => {
+  $q.dark.set(darkMode.value) // Enable/disable dark mode
+  $q.localStorage.setItem('darkMode', darkMode.value) // Save preference
+}
+
+const toggleNotification = () => {
+  $q.localStorage.setItem('notification', notifications.value)
+}
+
+const toggleSound = () => {
+  $q.localStorage.setItem('sound', sound.value)
+}
+initFont()
 </script>

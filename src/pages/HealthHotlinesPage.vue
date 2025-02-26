@@ -1,16 +1,15 @@
 <template>
-  <q-page class="">
+  <q-page class="text-cyan q-py-xl">
     <section class="q-pa-md">
-      <div class="text-h4 q-mb-lg">HEALTH HOTLINES</div>
+      <div class="text-h4 text-white q-mb-lg">HEALTH HOTLINES</div>
 
       <q-card
         v-for="(hotline, index) in hotlines"
         :key="index"
-        flat
-        class="bg-cyan-2 q-pa-md q-mb-md text-center"
+        class="transparent-card-40 q-pa-md q-mb-md text-center"
       >
         <q-card-section>
-          <div class="text-cyan-9 text-bold text-h6">{{ hotline.name }}</div>
+          <div class="text-weight-bold text-h6">{{ hotline.name }}</div>
           <div
             v-for="(number, nIndex) in hotline.numbers"
             :key="nIndex"
@@ -52,18 +51,5 @@ const hotlines = [
 <style scoped>
 .cursive-font {
   font-family: cursive;
-}
-
-.text-cyan-2 {
-  background-color: #a5f3fc !important;
-}
-.text-cyan-3 {
-  background-color: #67e8f9 !important;
-}
-.text-cyan-8 {
-  color: #155e75 !important;
-}
-.text-cyan-9 {
-  color: #164e63 !important;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <q-page class="column flex flex-center q-pa-sm">
-    <q-icon name="account_circle" size="8rem" color="primary" class="flex-center q-pa-md" />
-    <q-form @submit="onSubmit" @reset="onReset" class="q-pa-md">
+    <!-- <q-icon name="person" size="8rem" color="primary" class="flex-center q-pa-md" />
+    <q-form @submit="onSubmit" class="q-pa-md">
       <q-input
         rounded
         outlined
@@ -40,32 +40,100 @@
           color="primary"
         />
       </div>
-    </q-form>
+    </q-form> -->
+    <div class="q-pa-md">
+      <div class="text-h4 text-primary text-center" style="position: relative">
+        <q-img src="/images/turtle.png" class="top-right-image" />
+        <p>Hi I'm Alon, and you are?</p>
+      </div>
+      <q-input
+        v-model="profile.name"
+        rounded
+        standout
+        type="text"
+        bg-color="cyan-2"
+        color="primary"
+        label="Type Your Name Here"
+        lazy-rules
+        :rules="[(val) => (val !== null && val !== '') || 'Please fill your name']"
+      >
+        <template v-slot:after>
+          <q-btn round dense flat color="primary" icon="send" @click="registerUser" />
+        </template>
+      </q-input>
+
+      <div class="text-h4 text-primary text-center" style="position: relative">
+        <q-img src="/images/crab-up.png" class="bottom-left-image" />
+      </div>
+    </div>
+    <q-img src="/images/blue-star.png" class="bottom-right-image" />
   </q-page>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
 
+const $q = useQuasar()
 const router = useRouter()
 
-const fullName = ref(null)
-const Username = ref(null)
-const Password = ref(null)
+//const fullName = ref('')
+// const Username = ref(null)
+// const Password = ref(null)
 
-function onSubmit() {
-  // $q.notify({
-  //   color: 'green-4',
-  //   textColor: 'white',
-  //   icon: 'cloud_done',
-  //   message: 'Submitted',
-  // })
-  router.push('/')
+// function onSubmit() {
+//   // $q.notify({
+//   //   color: 'green-4',
+//   //   textColor: 'white',
+//   //   icon: 'cloud_done',
+//   //   message: 'Submitted',
+//   // })
+//   router.push('/')
+// }
+
+const profile = reactive({
+  name: '',
+  age: '0',
+  birthday: new Date(),
+  email: '',
+  feeling: '',
+})
+
+const registerUser = () => {
+  $q.localStorage.set('profile', profile)
+  setTimeout(() => {
+    router.push('/feeling')
+  }, 1500)
 }
 
-function onReset() {
-  Username.value = null
-  Password.value = null
-}
+onMounted(() => {
+  const profile = $q.localStorage.getItem('profile')
+  if (profile) router.push('/feeling')
+})
 </script>
+
+<style scoped>
+.top-right-image {
+  position: absolute;
+  top: -2rem;
+  right: 0;
+  width: 50px; /* Adjust the size of the image as needed */
+  height: auto; /* Maintain aspect ratio */
+}
+.bottom-left-image {
+  position: absolute;
+  bottom: -2rem;
+  left: 0;
+  width: 50px; /* Adjust the size of the image as needed */
+  height: auto; /* Maintain aspect ratio */
+}
+
+.bottom-right-image {
+  position: absolute;
+  bottom: 0rem;
+  right: 0;
+  width: 10rem; /* Adjust the size of the image as needed */
+  height: auto; /* Maintain aspect ratio */
+}
+</style>

@@ -48,7 +48,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 
@@ -73,4 +73,6 @@ function onReset() {
   Username.value = null
   Password.value = null
 }
+
+onMounted(() => router.push('/registration'))
 </script>
